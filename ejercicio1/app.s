@@ -13,7 +13,7 @@ main:
     mov     x20, x0                // x20 = base del framebuffer
 
     // ------------------------------
-    // FONDO
+    // bucle para pintar el FONDO del mar
     // ------------------------------
     movz    x10, 0x0042, lsl 16    // x10 = 0x00420000
     movk    x10, 0x6BAF, lsl 0     // x10 = 0x00426BAF  (color = 0x426BAF)
@@ -31,8 +31,7 @@ fondo_loop_x:
     subs    x2, x2, #1
     b.ne    fondo_loop_y
 
-    // ------------------------------
-    //  ARENA
+    //  bucle para representar la ARENA
     // ------------------------------
     movz    x10, 0x00D1, lsl 16    // x10 = 0x00D10000
     movk    x10, 0xC986, lsl 0     // x10 = 0x00D1C986  (color = 0xD1C986)
@@ -70,7 +69,7 @@ arena_loop_x:
     mov     x4, #20                // alto  = 20
     bl      pintar_rectangulo
 
-    // ------------------------------
+    // --------------------------
     // PRIMERA HOJA ALGA1 de 10×80 
     // ------------------------------
     // Reutilizamos el mismo color en x10
@@ -99,6 +98,22 @@ arena_loop_x:
     mov     x4, #80                // alto  = 80
     bl      pintar_rectangulo
 
+
+    // ------ Círculo de tamano radio 20 ------
+    mov     x0, x20             // framebuffer_base
+    mov     x1, #200            // X_centro
+    mov     x2, #120            // Y_centro
+    mov     x3, #20             // radio en píxeles
+    mov     x10, #0xFFFFFF      // color blanco
+    bl      pintar_circulo
+
+    // ------ Círculo de tamano radio 10
+    mov     x0, x20             // framebuffer_base
+    mov     x1, #300            // X_centro
+    mov     x2, #200            // Y_centro
+    mov     x3, #10             // radio = 10
+    mov     x10, #0x0000FF      // color azul
+    bl      pintar_circulo
 
     // GPIOs
 
@@ -182,4 +197,83 @@ pintar_columnas:
     subs    x11, x11, #1
     b.ne    pintar_filas
     ret
-    
+
+
+// ------------------------------------------------------------
+// Función: pintar_circulo
+//   Dibuja un círculo sólido completo.
+// Entradas:
+//   x0 = framebuffer_base
+//   x1 = X_centro
+//   x2 = Y_centro
+//   x3 = radio
+//   x10 = color
+// ------------------------------------------------------------
+pintar_circulo:
+    // calcular r^2
+    mul     x11, x3, x3         // x11 = radio^2
+
+    // deltaY = -radio
+    mov     x5, x3
+    neg     x5, x5              // x5 = -radio
+
+ciclo_filas_circulo:
+    cmp     x5, x3
+    b.gt    fin_circulo         // si deltaY > radio, terminamos
+
+    // dy2 = deltaY^2
+    mul     x6, x5, x5          // x6 = dy^2
+
+    // deltaX = -radio
+    mov     x7, x3
+    neg     x7, x7              // x7 = -radio
+
+ciclo_columnas_circulo:
+    cmp     x7, x3
+    b.gt    siguiente_fila      // si deltaX > radio, pasamos a la siguiente fila
+
+    // dx2 = deltaX^2
+    mul     x8, x7, x7          // x8 = dx^2
+
+    // suma = dx^2 + dy^2
+    add     x9, x6, x8
+    cmp     x9, x11
+    b.gt    continuar_columna   // si fuera mayor que r^2, no pintamos
+
+    // ---------------------------
+    // Pintar el píxel en (X_centro + deltaX, Y_centro + deltaY)
+    // Verificamos límites: 0 ≤ X < 640, 0 ≤ Y < 480
+    // ---------------------------
+    add     x12, x1, x7         // X_actual = X_centro + deltaX
+    cmp     x12, #0
+    blt     continuar_columna
+    cmp     x12, #639           // SCREEN_WIDTH - 1
+    bgt     continuar_columna
+
+    add     x13, x2, x5         // Y_actual = Y_centro + deltaY
+    cmp     x13, #0
+    blt     continuar_columna
+    cmp     x13, #479           // SCREEN_HEIGHT - 1
+    bgt     continuar_columna
+
+    // offset_bytes = ((Y_actual * SCREEN_WIDTH) + X_actual) * 4
+    lsl     x14, x13, #9        // Y_actual * 512
+    lsl     x15, x13, #7        // Y_actual * 128
+    add     x14, x14, x15       // x14 = Y_actual * 640
+    add     x14, x14, x12       // x14 = Y_actual*640 + X_actual
+    lsl     x14, x14, #2        // x14 = ((Y_actual*640)+X_actual)*4
+    add     x14, x0, x14        // x14 = &pixel(Y_actual,X_actual)
+
+    stur    w10, [x14]          // escribimos color
+
+continuar_columna:
+    add     x7, x7, #1          // deltaX++
+    b       ciclo_columnas_circulo
+
+siguiente_fila:
+    add     x5, x5, #1          // deltaY++
+    b       ciclo_filas_circulo
+
+fin_circulo:
+    ret
+

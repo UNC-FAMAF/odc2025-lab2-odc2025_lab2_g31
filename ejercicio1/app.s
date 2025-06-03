@@ -6,6 +6,9 @@
     .equ GPIO_GPFSEL0,     0x00
     .equ GPIO_GPLEV0,      0x34
 
+    .equ DELAY1, 0xFFFFFFFF
+    .equ DELAY2, 0X00066666
+
     .globl main
 
 main:
@@ -138,22 +141,24 @@ arena_loop_x:
 
     // TIBURON ANIMADO
 
-
+    mov x0, x20
+    mov x1, #240
+    mov x2, #180
  
+    bl dibujar_cola1
     bl dibujar_cuerpo
     bl dibujar_ojo1
-    bl dibujar_cola1
     bl dibujar_aletas1
 
-    bl hacer_tiempo
+    //
 
     //repetir en distintas posiciones de x e y
-    add x2, x2, #4
-    add x1, x1, #4
-    bl dibujar_cuerpo
-    bl dibujar_ojo2
+    //add x2, x2, #4
+    //add x1, x1, #4
     //bl dibujar_cola2
-    //dibujar_aletas2
+    //bl dibujar_cuerpo
+    //bl dibujar_ojo2
+    //bl dibujar_aletas2
 
    
 
@@ -320,91 +325,11 @@ siguiente_fila:
 fin_circulo:
     ret
 
+
+
 dibujar_cuerpo:
 
-    // TIBURON_COLA
-    mov x0, x20
-    mov x1, #240
-    mov x2, #180
-    mov x10, x21
-    mov x3, #8
-    mov x4, #8
-    bl pintar_rectangulo
-
-    mov x1, #240
-    add x2, x2, #8
-    mov x10, x22
-    mov x3, #8
-    mov x4, #8
-    bl pintar_rectangulo
-
-    add x1, x1,#8
-    mov x10, x23
-    bl pintar_rectangulo
-
-    add x2, x2, #8
-    mov x10, x22
-    mov x3, #4
-    bl pintar_rectangulo
-
-    add x1, x1, #4
-    mov x10, x23
-    mov x3, #12
-    bl pintar_rectangulo
-
-    add x2, x2, #8
-    mov x10, x22
-    mov x3, #4
-    bl pintar_rectangulo
-
-    add x1, x1, #4
-    mov x10, x21
-    mov x3, #8
-    bl pintar_rectangulo
-
-    add x1, x1, #8
-    mov x10, x23
-    bl pintar_rectangulo
-
-    sub x1, x1, #8
-    add x2, x2, #8
-    mov x4, #24
-    mov x10, x24
-    bl pintar_rectangulo
-
-    add x2, x2, #24
-    mov x4, #8
-    mov x10, x25
-    bl pintar_rectangulo
-
-    add x1, x1, #8
-    sub x2, x2, #24
-    mov x3, #24
-    mov x10, x21
-    bl pintar_rectangulo
-
-    add x2, x2, #8
-    mov x3, #8
-    bl pintar_rectangulo
-
-    add x1, x1, #8
-    mov x3, #16
-    mov x4, #4
-    mov x10, x23
-    bl pintar_rectangulo
-
-    add x2, x2, #4
-    mov x10, x21
-    bl pintar_rectangulo
-
-    sub x1, x1, #8
-    add x2, x2, #4
-    mov x3, #8
-    mov x4, #8
-    mov x10, x25
-    bl pintar_rectangulo
-
-    // PINTAR CUERPO
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
 
     add x1, x1, #16
     mov x4, #4
@@ -590,21 +515,109 @@ dibujar_cuerpo:
     mov x10, x23
     bl pintar_rectangulo
 
+    ldp x29, x30, [sp], #16     // Restaura x30
+
     ret
 
 
 dibujar_aletas1:
 
-    sub x1, x1, #96
-    add x2, x2, #20
+    //sub x1, x1, #96
+    //add x2, x2, #20
+    //mov x10, 
+
+    ret
+
+dibujar_cola2:
 
     ret
 
 dibujar_cola1:
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
 
+    mov x10, x21
+    mov x3, #8
+    mov x4, #8
+    bl pintar_rectangulo
+
+    add x2, x2, #8
+    mov x10, x22
+    mov x3, #8
+    mov x4, #8
+    bl pintar_rectangulo
+
+    add x1, x1,#8
+    mov x10, x23
+    bl pintar_rectangulo
+
+    add x2, x2, #8
+    mov x10, x22
+    mov x3, #4
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    mov x10, x23
+    mov x3, #12
+    bl pintar_rectangulo
+
+    add x2, x2, #8
+    mov x10, x22
+    mov x3, #4
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    mov x10, x21
+    mov x3, #8
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    mov x10, x23
+    bl pintar_rectangulo
+
+    sub x1, x1, #8
+    add x2, x2, #8
+    mov x4, #24
+    mov x10, x24
+    bl pintar_rectangulo
+
+    add x2, x2, #24
+    mov x4, #8
+    mov x10, x25
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    sub x2, x2, #24
+    mov x3, #24
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x2, x2, #8
+    mov x3, #8
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    mov x3, #16
+    mov x4, #4
+    mov x10, x23
+    bl pintar_rectangulo
+
+    add x2, x2, #4
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #8
+    add x2, x2, #4
+    mov x3, #8
+    mov x4, #8
+    mov x10, x25
+    bl pintar_rectangulo
+
+    ldp x29, x30, [sp], #16     // Restaura x30
     ret
 
 dibujar_ojo1:
+
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
 
     sub x1, x1, #24
     mov x10, x25
@@ -617,10 +630,15 @@ dibujar_ojo1:
     mov x4, #2
     bl pintar_rectangulo
 
+    ldp x29, x30, [sp], #16     // Restaura x30
+
     ret
 
 
 dibujar_ojo2:
+
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
+
 
     sub x1, x1, #24
     mov x10, x25
@@ -633,10 +651,17 @@ dibujar_ojo2:
     mov x4, #2
     bl pintar_rectangulo
 
+    ldp x29, x30, [sp], #16     // Restaura x30
+
+    ret
+
+dibujar_aletas2:
+
     ret
 
 hacer_tiempo:
-    mov x18, #0xff
-    sub x18, x18, #1
-    cbnz x18, hacer_tiempo
+    ldr x0, =0x3FFFFFF  // Valor empírico para QEMU (probado en RPi 4)
+1:
+    subs x0, x0, #1
+    b.ne 1b
     ret

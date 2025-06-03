@@ -136,6 +136,191 @@ arena_loop_x:
     movz x27, #0x00bf, lsl #16
     movk x27, #0xc8ca            // GRIS ++CLARO
 
+    // TIBURON ANIMADO
+
+
+ 
+    bl dibujar_cuerpo
+    bl dibujar_ojo1
+    bl dibujar_cola1
+    bl dibujar_aletas1
+
+    bl hacer_tiempo
+
+    //repetir en distintas posiciones de x e y
+    add x2, x2, #4
+    add x1, x1, #4
+    bl dibujar_cuerpo
+    bl dibujar_ojo2
+    //bl dibujar_cola2
+    //dibujar_aletas2
+
+   
+
+
+    // GPIOs
+
+
+    mov     x9, GPIO_BASE         // x9 = base de GPIO
+    str     wzr, [x9, GPIO_GPFSEL0]
+    ldr     w10, [x9, GPIO_GPLEV0]
+    and     w11, w10, #0b10
+    lsr     w11, w11, #1
+
+    // ------------------------------
+    // Infinite Loop
+
+InfLoop:
+
+	b InfLoop
+    b       InfLoop
+
+
+
+//
+//  FUNCIONES
+//  FUNCIONES
+//
+
+
+// ------------------------------------------------------------
+// Función: obtener_direccion_pixel
+// Entradas: x0 = framebuffer_base, x1 = X, x2 = Y
+// Salida  : x0 = &pixel(X,Y)
+// ------------------------------------------------------------
+obtener_direccion_pixel:
+    lsl     x3, x1, #2            // x3 = X * 4
+    lsl     x4, x2, #9            // x4 = Y * 512
+    lsl     x5, x2, #7            // x5 = Y * 128
+    add     x6, x4, x5            // x6 = Y * (512 + 128) = Y * 640
+    lsl     x6, x6, #2            // x6 = Y * 640 * 4 bytes
+    add     x0, x0, x3            // x0 = framebuffer + X*4
+    add     x0, x0, x6            // x0 = framebuffer + Y*640*4 + X*4
+    ret
+
+// ------------------------------------------------------------
+// Función: pintar_rectangulo
+// Entradas:
+//   x0 = framebuffer_base
+//   x1 = X0 (columna inicial)
+//   x2 = Y0 (fila inicial)
+//   x3 = ancho en píxeles
+//   x4 = alto en píxeles
+//   x10 = color (0xRRGGBB)
+// ------------------------------------------------------------
+pintar_rectangulo:
+    // Guardar ancho y alto en registros temporales
+    mov     x5, x3           // x5 = ancho
+    mov     x6, x4           // x6 = alto
+
+    // Calcular dirección inicial (X0,Y0):
+    // offset_bytes = ((Y0 * SCREEN_WIDTH) + X0) * 4
+    lsl     x12, x2, #9      // x12 = Y0 * 512
+    lsl     x13, x2, #7      // x13 = Y0 * 128
+    add     x12, x12, x13    // x12 = Y0 * 640
+    add     x12, x12, x1     // x12 = Y0*640 + X0
+    lsl     x12, x12, #2     // x12 = (Y0*640 + X0) * 4
+    add     x12, x20, x12    // x12 = framebuffer + offset
+
+    mov     x11, x6          // x11 = filas restantes (alto)
+    mov     x7,  x5          // x7  = columnas restantes (ancho)
+
+pintar_filas:
+    mov     x13, x7          // x13 = contador de columnas (ancho)
+    mov     x14, x12         // puntero actual en la fila
+
+pintar_columnas:
+    stur    w10, [x14]       // escribir color
+    add     x14, x14, #4     // avanzar 1 píxel en X
+    subs    x13, x13, #1
+    b.ne    pintar_columnas
+
+    // Siguiente fila: sumar SCREEN_WIDTH * 4 bytes = 640*4
+    add     x12, x12, #(SCREEN_WIDTH * 4)
+    subs    x11, x11, #1
+    b.ne    pintar_filas
+    ret
+
+
+// ------------------------------------------------------------
+// Función: pintar_circulo
+//   Dibuja un círculo sólido completo.
+// Entradas:
+//   x0 = framebuffer_base
+//   x1 = X_centro
+//   x2 = Y_centro
+//   x3 = radio
+//   x10 = color
+// ------------------------------------------------------------
+pintar_circulo:
+    // calcular r^2
+    mul     x11, x3, x3         // x11 = radio^2
+
+    // deltaY = -radio
+    mov     x5, x3
+    neg     x5, x5              // x5 = -radio
+
+ciclo_filas_circulo:
+    cmp     x5, x3
+    b.gt    fin_circulo         // si deltaY > radio, terminamos
+
+    // dy2 = deltaY^2
+    mul     x6, x5, x5          // x6 = dy^2
+
+    // deltaX = -radio
+    mov     x7, x3
+    neg     x7, x7              // x7 = -radio
+
+ciclo_columnas_circulo:
+    cmp     x7, x3
+    b.gt    siguiente_fila      // si deltaX > radio, pasamos a la siguiente fila
+
+    // dx2 = deltaX^2
+    mul     x8, x7, x7          // x8 = dx^2
+
+    // suma = dx^2 + dy^2
+    add     x9, x6, x8
+    cmp     x9, x11
+    b.gt    continuar_columna   // si fuera mayor que r^2, no pintamos
+
+    // ---------------------------
+    // Pintar el píxel en (X_centro + deltaX, Y_centro + deltaY)
+    // Verificamos límites: 0 ≤ X < 640, 0 ≤ Y < 480
+    // ---------------------------
+    add     x12, x1, x7         // X_actual = X_centro + deltaX
+    cmp     x12, #0
+    blt     continuar_columna
+    cmp     x12, #639           // SCREEN_WIDTH - 1
+    bgt     continuar_columna
+
+    add     x13, x2, x5         // Y_actual = Y_centro + deltaY
+    cmp     x13, #0
+    blt     continuar_columna
+    cmp     x13, #479           // SCREEN_HEIGHT - 1
+    bgt     continuar_columna
+
+    // offset_bytes = ((Y_actual * SCREEN_WIDTH) + X_actual) * 4
+    lsl     x14, x13, #9        // Y_actual * 512
+    lsl     x15, x13, #7        // Y_actual * 128
+    add     x14, x14, x15       // x14 = Y_actual * 640
+    add     x14, x14, x12       // x14 = Y_actual*640 + X_actual
+    lsl     x14, x14, #2        // x14 = ((Y_actual*640)+X_actual)*4
+    add     x14, x0, x14        // x14 = &pixel(Y_actual,X_actual)
+
+    stur    w10, [x14]          // escribimos color
+
+continuar_columna:
+    add     x7, x7, #1          // deltaX++
+    b       ciclo_columnas_circulo
+
+siguiente_fila:
+    add     x5, x5, #1          // deltaY++
+    b       ciclo_filas_circulo
+
+fin_circulo:
+    ret
+
+dibujar_cuerpo:
 
     // TIBURON_COLA
     mov x0, x20
@@ -353,8 +538,6 @@ arena_loop_x:
     add x2, x2, #4
     mov x3, #48
     bl pintar_rectangulo
-
-
     
     add x1, x1, #28
     sub x2, x2, #16
@@ -362,7 +545,6 @@ arena_loop_x:
     mov x4, #6
     mov x3, #36
     bl pintar_rectangulo
-
 
     add x1, x1, #36
     mov x3, #8
@@ -408,7 +590,21 @@ arena_loop_x:
     mov x10, x23
     bl pintar_rectangulo
 
-// DIBUJAR OJO 1
+    ret
+
+
+dibujar_aletas1:
+
+    sub x1, x1, #96
+    add x2, x2, #20
+
+    ret
+
+dibujar_cola1:
+
+    ret
+
+dibujar_ojo1:
 
     sub x1, x1, #24
     mov x10, x25
@@ -421,177 +617,8 @@ arena_loop_x:
     mov x4, #2
     bl pintar_rectangulo
 
-
-
-    // GPIOs
-
-
-    mov     x9, GPIO_BASE         // x9 = base de GPIO
-    str     wzr, [x9, GPIO_GPFSEL0]
-    ldr     w10, [x9, GPIO_GPLEV0]
-    and     w11, w10, #0b10
-    lsr     w11, w11, #1
-
-    // ------------------------------
-    // Infinite Loop
-
-InfLoop:
-
-	b InfLoop
-    b       InfLoop
-
-
-
-//
-//  FUNCIONES
-//  FUNCIONES
-//
-
-
-// ------------------------------------------------------------
-// Función: obtener_direccion_pixel
-// Entradas: x0 = framebuffer_base, x1 = X, x2 = Y
-// Salida  : x0 = &pixel(X,Y)
-// ------------------------------------------------------------
-obtener_direccion_pixel:
-    lsl     x3, x1, #2            // x3 = X * 4
-    lsl     x4, x2, #9            // x4 = Y * 512
-    lsl     x5, x2, #7            // x5 = Y * 128
-    add     x6, x4, x5            // x6 = Y * (512 + 128) = Y * 640
-    lsl     x6, x6, #2            // x6 = Y * 640 * 4 bytes
-    add     x0, x0, x3            // x0 = framebuffer + X*4
-    add     x0, x0, x6            // x0 = framebuffer + Y*640*4 + X*4
     ret
 
-// ------------------------------------------------------------
-// Función: pintar_rectangulo
-// Entradas:
-//   x0 = framebuffer_base
-//   x1 = X0 (columna inicial)
-//   x2 = Y0 (fila inicial)
-//   x3 = ancho en píxeles
-//   x4 = alto en píxeles
-//   x10 = color (0xRRGGBB)
-// ------------------------------------------------------------
-pintar_rectangulo:
-    // Guardar ancho y alto en registros temporales
-    mov     x5, x3           // x5 = ancho
-    mov     x6, x4           // x6 = alto
-
-    // Calcular dirección inicial (X0,Y0):
-    // offset_bytes = ((Y0 * SCREEN_WIDTH) + X0) * 4
-    lsl     x12, x2, #9      // x12 = Y0 * 512
-    lsl     x13, x2, #7      // x13 = Y0 * 128
-    add     x12, x12, x13    // x12 = Y0 * 640
-    add     x12, x12, x1     // x12 = Y0*640 + X0
-    lsl     x12, x12, #2     // x12 = (Y0*640 + X0) * 4
-    add     x12, x20, x12    // x12 = framebuffer + offset
-
-    mov     x11, x6          // x11 = filas restantes (alto)
-    mov     x7,  x5          // x7  = columnas restantes (ancho)
-
-pintar_filas:
-    mov     x13, x7          // x13 = contador de columnas (ancho)
-    mov     x14, x12         // puntero actual en la fila
-
-pintar_columnas:
-    stur    w10, [x14]       // escribir color
-    add     x14, x14, #4     // avanzar 1 píxel en X
-    subs    x13, x13, #1
-    b.ne    pintar_columnas
-
-    // Siguiente fila: sumar SCREEN_WIDTH * 4 bytes = 640*4
-    add     x12, x12, #(SCREEN_WIDTH * 4)
-    subs    x11, x11, #1
-    b.ne    pintar_filas
-    ret
-
-
-// ------------------------------------------------------------
-// Función: pintar_circulo
-//   Dibuja un círculo sólido completo.
-// Entradas:
-//   x0 = framebuffer_base
-//   x1 = X_centro
-//   x2 = Y_centro
-//   x3 = radio
-//   x10 = color
-// ------------------------------------------------------------
-pintar_circulo:
-    // calcular r^2
-    mul     x11, x3, x3         // x11 = radio^2
-
-    // deltaY = -radio
-    mov     x5, x3
-    neg     x5, x5              // x5 = -radio
-
-ciclo_filas_circulo:
-    cmp     x5, x3
-    b.gt    fin_circulo         // si deltaY > radio, terminamos
-
-    // dy2 = deltaY^2
-    mul     x6, x5, x5          // x6 = dy^2
-
-    // deltaX = -radio
-    mov     x7, x3
-    neg     x7, x7              // x7 = -radio
-
-ciclo_columnas_circulo:
-    cmp     x7, x3
-    b.gt    siguiente_fila      // si deltaX > radio, pasamos a la siguiente fila
-
-    // dx2 = deltaX^2
-    mul     x8, x7, x7          // x8 = dx^2
-
-    // suma = dx^2 + dy^2
-    add     x9, x6, x8
-    cmp     x9, x11
-    b.gt    continuar_columna   // si fuera mayor que r^2, no pintamos
-
-    // ---------------------------
-    // Pintar el píxel en (X_centro + deltaX, Y_centro + deltaY)
-    // Verificamos límites: 0 ≤ X < 640, 0 ≤ Y < 480
-    // ---------------------------
-    add     x12, x1, x7         // X_actual = X_centro + deltaX
-    cmp     x12, #0
-    blt     continuar_columna
-    cmp     x12, #639           // SCREEN_WIDTH - 1
-    bgt     continuar_columna
-
-    add     x13, x2, x5         // Y_actual = Y_centro + deltaY
-    cmp     x13, #0
-    blt     continuar_columna
-    cmp     x13, #479           // SCREEN_HEIGHT - 1
-    bgt     continuar_columna
-
-    // offset_bytes = ((Y_actual * SCREEN_WIDTH) + X_actual) * 4
-    lsl     x14, x13, #9        // Y_actual * 512
-    lsl     x15, x13, #7        // Y_actual * 128
-    add     x14, x14, x15       // x14 = Y_actual * 640
-    add     x14, x14, x12       // x14 = Y_actual*640 + X_actual
-    lsl     x14, x14, #2        // x14 = ((Y_actual*640)+X_actual)*4
-    add     x14, x0, x14        // x14 = &pixel(Y_actual,X_actual)
-
-    stur    w10, [x14]          // escribimos color
-
-continuar_columna:
-    add     x7, x7, #1          // deltaX++
-    b       ciclo_columnas_circulo
-
-siguiente_fila:
-    add     x5, x5, #1          // deltaY++
-    b       ciclo_filas_circulo
-
-fin_circulo:
-    ret
-
-//dibujar_cola:
-
-    //ret
-
-//dibujar_cuerpo:
-
-    //ret
 
 dibujar_ojo2:
 
@@ -607,4 +634,9 @@ dibujar_ojo2:
     bl pintar_rectangulo
 
     ret
-    
+
+hacer_tiempo:
+    mov x18, #0xff
+    sub x18, x18, #1
+    cbnz x18, hacer_tiempo
+    ret

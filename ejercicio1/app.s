@@ -115,6 +115,105 @@ arena_loop_x:
     mov     x10, #0x0000FF      // color azul
     bl      pintar_circulo
 
+    // ------ COLORES PARA EL TIBURON
+    movz x21, #0x003b, lsl #16   // Carga 0xCDCD en bits 16-31
+    movk x21, #0x414a            // Carga 0xCDCD en bits 0-15 , GRIS CLARO
+    movz x22, #0x002c, lsl #16   // GRIS OSCURO
+    movk x22, #0x3136
+    movz x23, #0x0056, lsl #16   // GRIS CLARO
+    movk x23, #0x5f68
+    movz x24, #0x0033, lsl #16
+    movk x24, #0x3a42
+    movz x25, #0x0012, lsl #16       // GRIS MUY OSCURO
+    movk x25, #0x1315  
+    movz x26, #0x00FF          // NEGRO
+    movk x26, #0xFFFF
+    movz x27, #0xDDDD
+    movk x27, #0xDDDD         // GRIS MUY CLARO
+
+
+    // TIBURON_COLA
+    mov x0, x20
+    mov x1, #240
+    mov x2, #180
+    mov x10, x21
+    mov x3, #8
+    mov x4, #8
+    bl pintar_rectangulo
+
+    mov x1, #240
+    add x2, x2, #8
+    mov x10, x22
+    mov x3, #8
+    mov x4, #8
+    bl pintar_rectangulo
+
+    add x1, x1,#8
+    mov x10, x23
+    bl pintar_rectangulo
+
+    add x2, x2, #8
+    mov x10, x22
+    mov x3, #4
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    mov x10, x23
+    mov x3, #12
+    bl pintar_rectangulo
+
+    add x2, x2, #8
+    mov x10, x22
+    mov x3, #4
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    mov x10, x21
+    mov x3, #8
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    mov x10, x23
+    bl pintar_rectangulo
+
+    sub x1, x1, #8
+    add x2, x2, #8
+    mov x4, #24
+    mov x10, x24
+    bl pintar_rectangulo
+
+    add x2, x2, #24
+    mov x4, #8
+    mov x10, x25
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    sub x2, x2, #24
+    mov x3, #24
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x2, x2, #8
+    mov x3, #8
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    mov x3, #16
+    mov x4, #4
+    mov x10, x23
+    bl pintar_rectangulo
+
+    add x2, x2, #4
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #8
+    add x2, x2, #4
+    mov x3, #8
+    mov x4, #8
+    mov x10, x25
+    bl pintar_rectangulo
+
     // GPIOs
 
 

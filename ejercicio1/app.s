@@ -116,20 +116,25 @@ arena_loop_x:
     bl      pintar_circulo
 
     // ------ COLORES PARA EL TIBURON
-    movz x21, #0x003b, lsl #16   // Carga 0xCDCD en bits 16-31
-    movk x21, #0x414a            // Carga 0xCDCD en bits 0-15 , GRIS CLARO
-    movz x22, #0x002c, lsl #16   // GRIS OSCURO
-    movk x22, #0x3136
-    movz x23, #0x0056, lsl #16   // GRIS CLARO
-    movk x23, #0x5f68
+
+    movz x16, #0xffff, lsl #16
+    movk x16, #0xffff            // BLANCO 
+    movz x17, #0x00d3, lsl #16
+    movk x17, #0xdbde            // GRIS +++CLARO
+    movz x21, #0x003b, lsl #16
+    movk x21, #0x414a            // GRIS 
+    movz x22, #0x002c, lsl #16
+    movk x22, #0x3136            // GRIS OSCURO
+    movz x23, #0x0056, lsl #16   
+    movk x23, #0x5f68            // GRIS CLARO
     movz x24, #0x0033, lsl #16
-    movk x24, #0x3a42
-    movz x25, #0x0012, lsl #16       // GRIS MUY OSCURO
-    movk x25, #0x1315  
-    movz x26, #0x00FF          // NEGRO
-    movk x26, #0xFFFF
-    movz x27, #0xDDDD
-    movk x27, #0xDDDD         // GRIS MUY CLARO
+    movk x24, #0x3a42            // GRIS +OSCURO
+    movz x25, #0x0012, lsl #16   
+    movk x25, #0x1315            // GRIS ++OSCURO
+    movz x26, #0x009b, lsl #16   
+    movk x26, #0xa3a6            // GRIS +CLARO
+    movz x27, #0x00bf, lsl #16
+    movk x27, #0xc8ca            // GRIS ++CLARO
 
 
     // TIBURON_COLA
@@ -212,6 +217,111 @@ arena_loop_x:
     mov x3, #8
     mov x4, #8
     mov x10, x25
+    bl pintar_rectangulo
+
+    // PINTAR CUERPO
+
+    add x1, x1, #16
+    mov x4, #4
+    mov x10, x26
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    mov x3, #24
+    mov x10, x27
+    bl pintar_rectangulo
+
+    add x2, x2, #4
+    mov x4, #8
+    mov x3, #8
+    mov x10, x25
+    bl pintar_rectangulo
+
+    sub x2, x2, #12
+    mov x3, #16
+    mov x10, x23
+    bl pintar_rectangulo
+
+    sub x2, x2, #16
+    mov x3, #8
+    mov x4, #16
+    mov x10, x24
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    add x2, x2, #4
+    mov x3, #136
+    mov x4, #4
+    mov x10, x23
+    bl pintar_rectangulo
+
+    add x2, x2, #4
+    mov x3, #8
+    mov x4, #8
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    mov x10, x26
+    bl pintar_rectangulo
+
+    add x2, x2, #8
+    mov x10, x27
+    mov x4, #4
+    mov x3, #16
+    bl pintar_rectangulo
+
+    mov x3, #8
+    mov x4, #8
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    add x2, x2, #8
+    mov x3, #20
+    mov x4, #4
+    mov x10, x16
+    bl pintar_rectangulo
+
+    add x2, x2, #4
+    mov x10, x27
+    bl pintar_rectangulo
+
+    sub x2, x2, #8
+    add x1, x1, #4
+    mov x3, #44
+    mov x10, x17
+    bl pintar_rectangulo
+
+    sub x2, x2, #4
+    mov x3, #8
+    mov x4, #4
+    mov x10, x27
+    bl pintar_rectangulo
+
+    sub x2, x2, #8
+    mov x3, #104
+    mov x4, #8
+    bl pintar_rectangulo
+
+    sub x2, x2, #8
+    mov x4, #4
+    mov x3, #104
+    mov x10, x23
+    bl pintar_rectangulo
+
+    add x1, x1, #40
+    sub x2, x2, #4
+    mov x3, #48
+    bl pintar_rectangulo
+
+    sub x1, x1, #32
+    add x2, x2, #20
+    mov x3, #36
+    mov x4, #8
+    mov x10, x17
+    bl pintar_rectangulo
+
+    mov x4, #4
+    mov x3, #56
     bl pintar_rectangulo
 
     // GPIOs

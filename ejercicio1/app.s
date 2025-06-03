@@ -387,15 +387,16 @@ dibujar_cuerpo:
     add x1, x1, #4
     add x2, x2, #8
     mov x3, #20
-    mov x4, #4
+    mov x4, #6
     mov x10, x16
     bl pintar_rectangulo
 
-    add x2, x2, #4
+    add x2, x2, #6
     mov x10, x27
+    mov x4, #4
     bl pintar_rectangulo
 
-    sub x2, x2, #8
+    sub x2, x2, #10
     add x1, x1, #4
     mov x3, #44
     mov x10, x17
@@ -522,9 +523,70 @@ dibujar_cuerpo:
 
 dibujar_aletas1:
 
-    //sub x1, x1, #96
-    //add x2, x2, #20
-    //mov x10, 
+    sub x1, x1, #62
+    add x2, x2, #16
+    mov x10, x25
+    mov x3, #8
+    mov x4, #10
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    mov x3, #16
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #12
+    add x2, x2, #10
+    mov x3, #20
+    bl pintar_rectangulo
+    
+    sub x1, x1, #4
+    add x2, x2, #8
+    mov x3, #16
+    mov x4, #8
+    mov x10, x25
+    bl pintar_rectangulo
+
+    add x1, x1, #24
+    sub x2, x2, #8
+    mov x3, #4
+    mov x4, #4
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    add x2, x2, #2
+    mov x3, #22
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    add x2, x2, #4
+    mov x10, x25
+    mov x4, #6
+    mov x3, #6
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    mov x10, x22
+    mov x3, #8
+    bl pintar_rectangulo
+    
+    add x2, x2, #6
+    mov x10, x25
+    mov x4, #2
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    sub x2, x2, #6
+    mov x10, x24
+    mov x3, #4
+    mov x4, #8
+    bl pintar_rectangulo
+
+
+
+
+
 
     ret
 

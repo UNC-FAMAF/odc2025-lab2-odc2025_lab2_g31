@@ -118,49 +118,27 @@ arena_loop_x:
     mov     x10, #0x0000FF      // color azul
     bl      pintar_circulo
 
-    // ------ COLORES PARA EL TIBURON
-
-    movz x16, #0xffff, lsl #16
-    movk x16, #0xffff            // BLANCO 
-    movz x17, #0x00d3, lsl #16
-    movk x17, #0xdbde            // GRIS +++CLARO
-    movz x21, #0x003b, lsl #16
-    movk x21, #0x414a            // GRIS 
-    movz x22, #0x002c, lsl #16
-    movk x22, #0x3136            // GRIS OSCURO
-    movz x23, #0x0056, lsl #16   
-    movk x23, #0x5f68            // GRIS CLARO
-    movz x24, #0x0033, lsl #16
-    movk x24, #0x3a42            // GRIS +OSCURO
-    movz x25, #0x0012, lsl #16   
-    movk x25, #0x1315            // GRIS ++OSCURO
-    movz x26, #0x009b, lsl #16   
-    movk x26, #0xa3a6            // GRIS +CLARO
-    movz x27, #0x00bf, lsl #16
-    movk x27, #0xc8ca            // GRIS ++CLARO
 
     // TIBURON ANIMADO
 
     mov x0, x20
     mov x1, #240
-    mov x2, #180
+    mov x2, #200
  
     bl dibujar_cola1
     bl dibujar_cuerpo
     bl dibujar_ojo1
     bl dibujar_aletas1
 
+    // AQUI LLAMAR A TU FUNCION QUE HACE TU dibujo 
+
+    bl dibujar_XXXXXX
+
     //
 
-    //repetir en distintas posiciones de x e y
-    //add x2, x2, #4
-    //add x1, x1, #4
-    //bl dibujar_cola2
-    //bl dibujar_cuerpo
-    //bl dibujar_ojo2
-    //bl dibujar_aletas2
-
-   
+    mov x1, #0
+    mov x2, #400
+    bl detalles_arena
 
 
     // GPIOs
@@ -523,6 +501,9 @@ dibujar_cuerpo:
 
 dibujar_aletas1:
 
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
+
+
     sub x1, x1, #62
     add x2, x2, #16
     mov x10, x25
@@ -583,19 +564,64 @@ dibujar_aletas1:
     mov x4, #8
     bl pintar_rectangulo
 
-
-
-
-
+    ldp x29, x30, [sp], #16     // Restaura x30
 
     ret
 
 dibujar_cola2:
 
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
+
+
+    // ------ COLORES PARA EL TIBURON
+
+    movz x16, #0xffff, lsl #16
+    movk x16, #0xffff            // BLANCO 
+    movz x17, #0x00d3, lsl #16
+    movk x17, #0xdbde            // GRIS +++CLARO
+    movz x21, #0x003b, lsl #16
+    movk x21, #0x414a            // GRIS 
+    movz x22, #0x002c, lsl #16
+    movk x22, #0x3136            // GRIS OSCURO
+    movz x23, #0x0056, lsl #16   
+    movk x23, #0x5f68            // GRIS CLARO
+    movz x24, #0x0033, lsl #16
+    movk x24, #0x3a42            // GRIS +OSCURO
+    movz x25, #0x0012, lsl #16   
+    movk x25, #0x1315            // GRIS ++OSCURO
+    movz x26, #0x009b, lsl #16   
+    movk x26, #0xa3a6            // GRIS +CLARO
+    movz x27, #0x00bf, lsl #16
+    movk x27, #0xc8ca            // GRIS ++CLARO
+
+    ldp x29, x30, [sp], #16     // Restaura x30
+
+
     ret
 
 dibujar_cola1:
     stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
+
+    // ------ COLORES PARA EL TIBURON
+
+    movz x16, #0xffff, lsl #16
+    movk x16, #0xffff            // BLANCO 
+    movz x17, #0x00d3, lsl #16
+    movk x17, #0xdbde            // GRIS +++CLARO
+    movz x21, #0x003b, lsl #16
+    movk x21, #0x414a            // GRIS 
+    movz x22, #0x002c, lsl #16
+    movk x22, #0x3136            // GRIS OSCURO
+    movz x23, #0x0056, lsl #16   
+    movk x23, #0x5f68            // GRIS CLARO
+    movz x24, #0x0033, lsl #16
+    movk x24, #0x3a42            // GRIS +OSCURO
+    movz x25, #0x0012, lsl #16   
+    movk x25, #0x1315            // GRIS ++OSCURO
+    movz x26, #0x009b, lsl #16   
+    movk x26, #0xa3a6            // GRIS +CLARO
+    movz x27, #0x00bf, lsl #16
+    movk x27, #0xc8ca            // GRIS ++CLARO
 
     mov x10, x21
     mov x3, #8
@@ -604,8 +630,6 @@ dibujar_cola1:
 
     add x2, x2, #8
     mov x10, x22
-    mov x3, #8
-    mov x4, #8
     bl pintar_rectangulo
 
     add x1, x1,#8
@@ -918,3 +942,77 @@ dibujar_casa_pina:
     // Restaurar stack y regresar
     ldp  x29, x30, [sp], #16
     ret
+
+dibujar_XXXXXX:
+
+    stp  x29, x30, [sp, #-16]!  
+
+    // DEFINI TUS COLORES
+
+    movz x16, #0xffff, lsl #16
+    movk x16, #0xffff            // BLANCO 
+    movz x17, #0x00d3, lsl #16
+    movk x17, #0xdbde            // GRIS +++CLARO
+    movz x21, #0x003b, lsl #16
+    movk x21, #0x414a            // GRIS 
+    movz x22, #0x002c, lsl #16
+    movk x22, #0x3136            // GRIS OSCURO
+    movz x23, #0x0056, lsl #16   
+    movk x23, #0x5f68            // GRIS CLARO
+    movz x24, #0x0033, lsl #16
+    movk x24, #0x3a42            // GRIS +OSCURO
+    movz x25, #0x0012, lsl #16   
+    movk x25, #0x1315            // GRIS ++OSCURO
+    movz x26, #0x009b, lsl #16   
+    movk x26, #0xa3a6            // GRIS +CLARO
+    movz x27, #0x00bf, lsl #16
+    movk x27, #0xc8ca            // GRIS ++CLARO
+
+
+    mov x1, #0            // luego borrar estas lineas una vez inicializado
+    mov x2, #0            // idem
+
+    //-------DEFINI TU FUNCION AQUI-------
+
+    ldp  x29, x30, [sp], #16
+
+    ret
+
+detalles_arena:
+
+    stp  x29, x30, [sp, #-16]!  
+
+    // DEFINI TUS COLORES
+
+    movz x16, #0xffff, lsl #16
+    movk x16, #0xffff            // BLANCO 
+    movz x17, #0x00d3, lsl #16
+    movk x17, #0xdbde            // GRIS +++CLARO
+    movz x21, #0x003b, lsl #16
+    movk x21, #0x414a            // GRIS 
+    movz x22, #0x002c, lsl #16
+    movk x22, #0x3136            // GRIS OSCURO
+    movz x23, #0x0056, lsl #16   
+    movk x23, #0x5f68            // GRIS CLARO
+    movz x24, #0x0033, lsl #16
+    movk x24, #0x3a42            // GRIS +OSCURO
+    movz x25, #0x0012, lsl #16   
+    movk x25, #0x1315            // GRIS ++OSCURO
+    movz x26, #0x009b, lsl #16   
+    movk x26, #0xa3a6            // GRIS +CLARO
+    movz x27, #0x00bf, lsl #16
+    movk x27, #0xc8ca            // GRIS ++CLARO
+
+
+    mov x1, #0            // luego borrar estas lineas una vez inicializado
+    mov x2, #0            // idem
+
+    //-------DEFINI TU FUNCION AQUI-------
+
+    ldp  x29, x30, [sp], #16
+
+
+    ret
+    
+
+// DEJAR ESTA LINEA AL ULTIMO 

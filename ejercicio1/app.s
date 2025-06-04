@@ -727,3 +727,194 @@ hacer_tiempo:
     subs x0, x0, #1
     b.ne 1b
     ret
+
+// ---------------------------------------------------------
+// Función: dibujar_bob
+// Entrada:
+//   x1  = X_base (esquina superior izquierda de Bob pequeño)
+//   x2  = Y_base
+//
+// Dibuja un Bob Esponja de unos 20×30 píxeles, usando solo
+// un par de rectángulos para cuerpo y ojos, y un pequeño
+// rectángulo para la boca.
+// ---------------------------------------------------------
+
+dibujar_bob:
+    stp  x29, x30, [sp, #-16]!    // Guardar FP y LR
+    mov  x29, sp
+    mov x22,x1 //nos facilita no tener q recaclular la pos inicial
+    mov x23,x2 //tmb lo guardamos
+
+    // 1. Cuerpo amarillo (20×30)
+    mov  x3, #20        // ancho
+    mov  x4, #30        // alto
+    movz x10, #0xF700   // w10 = 0x0000FF00 (byte alto = 0x00FF)
+    movk x10, #0x00FF, lsl #16
+    // → w10 final = 0x00FFFF00 (amarillo)
+    bl   pintar_rectangulo
+
+    // 2. Ojos 
+    // Ojo izquierdo, desplazado 4px a derecha y 6px abajo dentro del cuerpo
+    add  x1, x1, #4     // x = X_base + 4
+    add  x2, x2, #6     // y = Y_base + 6
+    mov  x3, #4
+    mov  x4, #4
+    movz x10, #0xFFFF   // w10 = 0xFFFFFF
+    movk x10, #0x00FF, lsl #16
+    // → w10 final = 0x00FFFFFF (blanco)
+    bl   pintar_rectangulo
+
+    // Ojo der 10px a la derecha de X_base (4 + 6)
+    add  x1, x1, #8     // x = (X_base + 4) + 6 = X_base + 10 (tenemos en cuenta la usma anterior)
+    // y sigue siendo Y_base + 6 no se modifica esta donde nos interesa
+    mov  x3, #4
+    mov  x4, #4
+    movz x10, #0xFFFF
+    movk x10, #0x00FF, lsl #16
+    bl   pintar_rectangulo
+
+    // 3. Boca (6×2)
+    // Restaurar x1 a X_base + 7 (aprox centro menos 3px)
+    sub  x1, x1, #10    // x = (X_base + 10) - 10 = X_base
+    add  x1, x1, #7     // x = X_base + 7
+    // y = Y_base + 20 (parte inferior del cuerpo, 30 - 8)
+    sub  x2, x2, #6     // x2 = (Y_base + 6) - 6 = Y_base
+    add  x2, x2, #20    // x2 = Y_base + 20
+    mov  x3, #6
+    mov  x4, #2
+    movz x10, #0x0000   // w10 = 0x00000000 (negro)
+    movk x10, #0x0000, lsl #16
+    bl   pintar_rectangulo
+
+    //4 Pantalones azules (20x10)
+    //necesito posicionarme 30 pixeles abajo de la pos nicial
+    mov x1, x22
+    mov x2, x23
+    add x2, x2, #30
+    add x3, x3, #15
+    add x4, x4, #5
+    movz x10, #0x00FF   // w10 =(azul)
+    movk x10, #0x0000, lsl #16
+    bl   pintar_rectangulo
+
+
+    //5 piernas
+    //desde x2 solo bajamos 9 pixeles para hacer las piernas
+    add x2, x2, #9
+    add x1,x1,#3
+    mov x3,#3
+    mov x4,#10
+    movz x10, #0xF700   // w10 = 0x0000FF00 (byte alto = 0x00FF)
+    movk x10, #0x00FF, lsl #16
+    bl pintar_rectangulo
+
+
+    //la otra pierna solo sumamos x1
+    add x1, x1, #12
+    bl pintar_rectangulo
+    // Restaurar stack y salir
+    ldp  x29, x30, [sp], #16
+    ret
+
+
+// ---------------------------------------------------------
+// Función: dibujar_casa_pina
+// Entrada:
+//   x20 = framebuffer_base (no se modifica jamás)
+//   x1  = X_base (esquina superior izquierda de la casa de piña)
+//   x2  = Y_base
+//
+// Dibuja una casa de piña de ~30×40 px, con cuerpo naranja,
+// puerta marrón, ventanas celestes y hojas verdes. Cada rectángulo
+// recarga X_base/Y_base desde x5/x6 para evitar “desfase”.
+// ---------------------------------------------------------
+dibujar_casa_pina:
+    stp  x29, x30, [sp, #-16]!    // Guardar FP y LR
+    mov  x29, sp
+
+    // 1) Guardar X_base y Y_base en registros aparte para no perderlos
+    mov  x22, x1        // x5 = X_base
+    mov  x23, x2        // x6 = Y_base
+
+    // ─── 2) Cuerpo de la piña (30×40) ───
+    mov  x3, #30       // ancho  = 30
+    mov  x4, #40       // alto   = 40
+    movz x10, #0xA500  // w10 = 0x0000A500
+    movk x10, #0x00FF, lsl #16
+    // → w10 = 0x00FFA500 (naranja)
+    bl   pintar_rectangulo
+    // ─── 3) Puerta marrón (10×15) ───
+    //   X = X_base + 10, Y = Y_base + 25
+    add  x1, x1, #10   // x1 = X_base + 10 
+    add  x2, x2, #25   // x2 = Y_base + 25
+    mov  x3, #10       // ancho  = 10
+    mov  x4, #15       // alto   = 15
+    movz x10, #0x4513  // w10 = 0x00004513
+    movk x10, #0x008B, lsl #16
+    // → w10 = 0x008B4513 (marrón)
+    bl   pintar_rectangulo
+    // ─── 4) Ventana izquierda (6×6, celeste) ───
+    //   X = X_base + 5, Y = Y_base + 10
+    mov  x1, x22 //restauro el xbase
+    add  x1, x1, #5    // x1 = x_base + 5
+    mov  x2, x23
+    add  x2, x2, #10   // x2 = Y_base + 10
+    mov  x3, #6        // ancho  = 6
+    mov  x4, #6        // alto   = 6
+    movz x10, #0xD8E6  // w10 = 0x0000D8E6
+    movk x10, #0x00AD, lsl #16
+    // → w10 = 0x00ADD8E6 (celeste)
+    bl   pintar_rectangulo
+
+    // ─── 5) Ventana derecha (6×6, celeste) ───
+    //   X = X_base + 19, Y = Y_base + 10
+    mov  x1, x22
+    add  x1, x1, #19   // x1 = X_base + 19
+    mov  x2, x23
+    add  x2, x2, #10   // x2 = Y_base + 10
+    mov  x3, #6        // ancho  = 6
+    mov  x4, #6        // alto   = 6
+    movz x10, #0xD8E6
+    movk x10, #0x00AD, lsl #16
+    bl   pintar_rectangulo
+
+    // ─── 6) Hoja izquierda verde (8×8) ───
+    //   X = X_base + 6, Y = Y_base – 8
+    mov  x1, x22
+    add  x1, x1, #6    // x1 = X_base + 6
+    mov  x2, x23
+    sub  x2, x2, #8    // x2 = Y_base - 8
+    mov  x3, #8        // ancho  = 8
+    mov  x4, #8        // alto   = 8
+    movz x10, #0xFF00  // w10 = 0x0000FF00
+    movk x10, #0x0000, lsl #16
+    // → w10 = 0x0000FF00 (verde puro)
+    bl   pintar_rectangulo
+
+    // ─── 7) Hoja central verde (8×8) ───
+    //   X = X_base + 11, Y = Y_base – 12
+    mov  x1, x22
+    add  x1, x1, #11   // x1 = X_base + 11
+    mov  x2, x23
+    sub  x2, x2, #12   // x2 = Y_base - 12
+    mov  x3, #8
+    mov  x4, #8
+    movz x10, #0xFF00
+    movk x10, #0x0000, lsl #16
+    bl   pintar_rectangulo
+
+    // ─── 8) Hoja derecha verde (8×8) ───
+    //   X = X_base + 16, Y = Y_base – 8
+    mov  x1, x22
+    add  x1, x1, #16   // x1 = X_base + 16
+    mov  x2, x23
+    sub  x2, x2, #8    // x2 = Y_base - 8
+    mov  x3, #8
+    mov  x4, #8
+    movz x10, #0xFF00
+    movk x10, #0x0000, lsl #16
+    bl   pintar_rectangulo
+
+    // Restaurar stack y regresar
+    ldp  x29, x30, [sp], #16
+    ret

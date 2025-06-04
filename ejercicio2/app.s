@@ -1,53 +1,1018 @@
-	.equ SCREEN_WIDTH, 		640
-	.equ SCREEN_HEIGH, 		480
-	.equ BITS_PER_PIXEL,  	32
+    .equ SCREEN_WIDTH,     640
+    .equ SCREEN_HEIGHT,    480
+    .equ BITS_PER_PIXEL,   32
 
-	.equ GPIO_BASE,      0x3f200000
-	.equ GPIO_GPFSEL0,   0x00
-	.equ GPIO_GPLEV0,    0x34
+    .equ GPIO_BASE,        0x3f200000
+    .equ GPIO_GPFSEL0,     0x00
+    .equ GPIO_GPLEV0,      0x34
 
-	.globl main
+    .equ DELAY1, 0xFFFFFFFF
+    .equ DELAY2, 0X00066666
+
+    .globl main
 
 main:
-	// x0 contiene la direccion base del framebuffer
- 	mov x20, x0	// Guarda la dirección base del framebuffer en x20
-	//---------------- CODE HERE ------------------------------------
+    // Guardar puntero base del framebuffer
+    mov     x20, x0                // x20 = base del framebuffer
 
-	movz x10, 0xC7, lsl 16
-	movk x10, 0x1585, lsl 00
+    // ------------------------------
+    // bucle para pintar el FONDO del mar
+    // ------------------------------
+    movz    x10, 0x0042, lsl 16    // x10 = 0x00420000
+    movk    x10, 0x6BAF, lsl 0     // x10 = 0x00426BAF  (color = 0x426BAF)
 
-	mov x2, SCREEN_HEIGH         // Y Size
-loop1:
-	mov x1, SCREEN_WIDTH         // X Size
-loop0:
-	stur w10,[x0]  // Colorear el pixel N
-	add x0,x0,4	   // Siguiente pixel
-	sub x1,x1,1	   // Decrementar contador X
-	cbnz x1,loop0  // Si no terminó la fila, salto
-	sub x2,x2,1	   // Decrementar contador Y
-	cbnz x2,loop1  // Si no es la última fila, salto
+    mov     x0, x20                // x0 = framebuffer
+    mov     x2, SCREEN_HEIGHT      // filas restantes
 
-	// Ejemplo de uso de gpios
-	mov x9, GPIO_BASE
+fondo_loop_y:
+    mov     x1, SCREEN_WIDTH       // columnas restantes
+fondo_loop_x:
+    stur    w10, [x0]              // escribir color
+    add     x0, x0, #4             // avanzar 1 píxel (4 bytes)
+    subs    x1, x1, #1
+    b.ne    fondo_loop_x
+    subs    x2, x2, #1
+    b.ne    fondo_loop_y
 
-	// Atención: se utilizan registros w porque la documentación de broadcom
-	// indica que los registros que estamos leyendo y escribiendo son de 32 bits
+    //  bucle para representar la ARENA
+    // ------------------------------
+    movz    x10, 0x00D1, lsl 16    // x10 = 0x00D10000
+    movk    x10, 0xC986, lsl 0     // x10 = 0x00D1C986  (color = 0xD1C986)
 
-	// Setea gpios 0 - 9 como lectura
-	str wzr, [x9, GPIO_GPFSEL0]
+    // Calcular desplazamiento a la fila 400: (400 * 640 * 4)
+    mov     x1, #400
+    lsl     x12, x1, #9            // x12 = 400 * 512
+    lsl     x13, x1, #7            // x13 = 400 * 128
+    add     x12, x12, x13          // x12 = 400 * 640
+    lsl     x12, x12, #2           // x12 = 400 * 640 * 4 bytes
 
-	// Lee el estado de los GPIO 0 - 31
-	ldr w10, [x9, GPIO_GPLEV0]
+    add     x0, x20, x12           // x0 = framebuffer + offset fila 400
+    mov     x2, #80                // 80 filas de arena
 
-	// And bit a bit mantiene el resultado del bit 2 en w10
-	and w11, w10, 0b10
+arena_loop_y:
+    mov     x1, SCREEN_WIDTH       // 640 columnas
+arena_loop_x:
+    stur    w10, [x0]
+    add     x0, x0, #4
+    subs    x1, x1, #1
+    b.ne    arena_loop_x
+    subs    x2, x2, #1
+    b.ne    arena_loop_y
 
-	// w11 será 1 si había un 1 en la posición 2 de w10, si no será 0
-	// efectivamente, su valor representará si GPIO 2 está activo
-	lsr w11, w11, 1
+    // ------------------------------
+    // ALGA HORIZONTAL(prueba) de 80×20
+    // ------------------------------
+    movz    x10, 0x002F, lsl 16    // x10 = 0x002F0000
+    movk    x10, 0x7E41, lsl 0     // x10 = 0x002F7E41  (color = 0x2F7E41)
 
-	//---------------------------------------------------------------
-	// Infinite Loop
+    // Parámetros alga horizontal: X0=100, Y0=200, ancho=80, alto=20
+    mov     x1, #100               // X0
+    mov     x2, #200               // Y0
+    mov     x3, #80                // ancho = 80
+    mov     x4, #20                // alto  = 20
+    bl      pintar_rectangulo
+
+    // --------------------------
+    // PRIMERA HOJA ALGA1 de 10×80 
+    // ------------------------------
+    // Reutilizamos el mismo color en x10
+    // Parámetros alga vertical: X0=300, Y0=200, ancho=10, alto=80
+    mov     x1, #300               // X0 (por ejemplo, más a la derecha)
+    mov     x2, #200               // Y0
+    mov     x3, #10                // ancho = 20 (más estrecho)
+    mov     x4, #80                // alto  = 80 (más alto)
+    bl      pintar_rectangulo
+    //------------------------
+    // SEGUNDA HOJA ALGA1 10X80
+    // ------------------------------
+    // Parámetros alga vertical: X0=290, Y0=120, ancho=10, alto=80
+    mov     x1, #290               // X0 (por ejemplo, más a la derecha)
+    mov     x2, #120               // Y0
+    mov     x3, #10                // ancho = 20 (más estrecho)
+    mov     x4, #80                // alto  = 80 (más alto)
+    bl      pintar_rectangulo
+    //------------------------
+    // TERCERA HOJA ALGA1 10X80
+    // ------------------------------
+    // Parámetros alga vertical: X0=300, Y0=40, ancho=10, alto=80
+    mov     x1, #300              // X0 (por ejemplo, más a la derecha)
+    mov     x2, #40               // Y0
+    mov     x3, #10                // ancho = 20 
+    mov     x4, #80                // alto  = 80
+    bl      pintar_rectangulo
+
+
+    // ------ Círculo de tamano radio 20 ------
+    mov     x0, x20             // framebuffer_base
+    mov     x1, #200            // X_centro
+    mov     x2, #120            // Y_centro
+    mov     x3, #20             // radio en píxeles
+    mov     x10, #0xFFFFFF      // color blanco
+    bl      pintar_circulo
+
+    // ------ Círculo de tamano radio 10
+    mov     x0, x20             // framebuffer_base
+    mov     x1, #300            // X_centro
+    mov     x2, #200            // Y_centro
+    mov     x3, #10             // radio = 10
+    mov     x10, #0x0000FF      // color azul
+    bl      pintar_circulo
+
+
+    // TIBURON ANIMADO
+
+    mov x0, x20
+    mov x1, #240
+    mov x2, #200
+ 
+    bl dibujar_cola1
+    bl dibujar_cuerpo
+    bl dibujar_ojo1
+    bl dibujar_aletas1
+
+    // AQUI LLAMAR A TU FUNCION QUE HACE TU dibujo 
+
+    bl dibujar_XXXXXX
+
+    //
+
+    mov x1, #0
+    mov x2, #400
+    bl detalles_arena
+
+
+    // GPIOs
+
+
+    mov     x9, GPIO_BASE         // x9 = base de GPIO
+    str     wzr, [x9, GPIO_GPFSEL0]
+    ldr     w10, [x9, GPIO_GPLEV0]
+    and     w11, w10, #0b10
+    lsr     w11, w11, #1
+
+    // ------------------------------
+    // Infinite Loop
 
 InfLoop:
+
 	b InfLoop
+    b       InfLoop
+
+
+
+//
+//  FUNCIONES
+//  FUNCIONES
+//
+
+
+// ------------------------------------------------------------
+// Función: obtener_direccion_pixel
+// Entradas: x0 = framebuffer_base, x1 = X, x2 = Y
+// Salida  : x0 = &pixel(X,Y)
+// ------------------------------------------------------------
+obtener_direccion_pixel:
+    lsl     x3, x1, #2            // x3 = X * 4
+    lsl     x4, x2, #9            // x4 = Y * 512
+    lsl     x5, x2, #7            // x5 = Y * 128
+    add     x6, x4, x5            // x6 = Y * (512 + 128) = Y * 640
+    lsl     x6, x6, #2            // x6 = Y * 640 * 4 bytes
+    add     x0, x0, x3            // x0 = framebuffer + X*4
+    add     x0, x0, x6            // x0 = framebuffer + Y*640*4 + X*4
+    ret
+
+// ------------------------------------------------------------
+// Función: pintar_rectangulo
+// Entradas:
+//   x0 = framebuffer_base
+//   x1 = X0 (columna inicial)
+//   x2 = Y0 (fila inicial)
+//   x3 = ancho en píxeles
+//   x4 = alto en píxeles
+//   x10 = color (0xRRGGBB)
+// ------------------------------------------------------------
+pintar_rectangulo:
+    // Guardar ancho y alto en registros temporales
+    mov     x5, x3           // x5 = ancho
+    mov     x6, x4           // x6 = alto
+
+    // Calcular dirección inicial (X0,Y0):
+    // offset_bytes = ((Y0 * SCREEN_WIDTH) + X0) * 4
+    lsl     x12, x2, #9      // x12 = Y0 * 512
+    lsl     x13, x2, #7      // x13 = Y0 * 128
+    add     x12, x12, x13    // x12 = Y0 * 640
+    add     x12, x12, x1     // x12 = Y0*640 + X0
+    lsl     x12, x12, #2     // x12 = (Y0*640 + X0) * 4
+    add     x12, x20, x12    // x12 = framebuffer + offset
+
+    mov     x11, x6          // x11 = filas restantes (alto)
+    mov     x7,  x5          // x7  = columnas restantes (ancho)
+
+pintar_filas:
+    mov     x13, x7          // x13 = contador de columnas (ancho)
+    mov     x14, x12         // puntero actual en la fila
+
+pintar_columnas:
+    stur    w10, [x14]       // escribir color
+    add     x14, x14, #4     // avanzar 1 píxel en X
+    subs    x13, x13, #1
+    b.ne    pintar_columnas
+
+    // Siguiente fila: sumar SCREEN_WIDTH * 4 bytes = 640*4
+    add     x12, x12, #(SCREEN_WIDTH * 4)
+    subs    x11, x11, #1
+    b.ne    pintar_filas
+    ret
+
+
+// ------------------------------------------------------------
+// Función: pintar_circulo
+//   Dibuja un círculo sólido completo.
+// Entradas:
+//   x0 = framebuffer_base
+//   x1 = X_centro
+//   x2 = Y_centro
+//   x3 = radio
+//   x10 = color
+// ------------------------------------------------------------
+pintar_circulo:
+    // calcular r^2
+    mul     x11, x3, x3         // x11 = radio^2
+
+    // deltaY = -radio
+    mov     x5, x3
+    neg     x5, x5              // x5 = -radio
+
+ciclo_filas_circulo:
+    cmp     x5, x3
+    b.gt    fin_circulo         // si deltaY > radio, terminamos
+
+    // dy2 = deltaY^2
+    mul     x6, x5, x5          // x6 = dy^2
+
+    // deltaX = -radio
+    mov     x7, x3
+    neg     x7, x7              // x7 = -radio
+
+ciclo_columnas_circulo:
+    cmp     x7, x3
+    b.gt    siguiente_fila      // si deltaX > radio, pasamos a la siguiente fila
+
+    // dx2 = deltaX^2
+    mul     x8, x7, x7          // x8 = dx^2
+
+    // suma = dx^2 + dy^2
+    add     x9, x6, x8
+    cmp     x9, x11
+    b.gt    continuar_columna   // si fuera mayor que r^2, no pintamos
+
+    // ---------------------------
+    // Pintar el píxel en (X_centro + deltaX, Y_centro + deltaY)
+    // Verificamos límites: 0 ≤ X < 640, 0 ≤ Y < 480
+    // ---------------------------
+    add     x12, x1, x7         // X_actual = X_centro + deltaX
+    cmp     x12, #0
+    blt     continuar_columna
+    cmp     x12, #639           // SCREEN_WIDTH - 1
+    bgt     continuar_columna
+
+    add     x13, x2, x5         // Y_actual = Y_centro + deltaY
+    cmp     x13, #0
+    blt     continuar_columna
+    cmp     x13, #479           // SCREEN_HEIGHT - 1
+    bgt     continuar_columna
+
+    // offset_bytes = ((Y_actual * SCREEN_WIDTH) + X_actual) * 4
+    lsl     x14, x13, #9        // Y_actual * 512
+    lsl     x15, x13, #7        // Y_actual * 128
+    add     x14, x14, x15       // x14 = Y_actual * 640
+    add     x14, x14, x12       // x14 = Y_actual*640 + X_actual
+    lsl     x14, x14, #2        // x14 = ((Y_actual*640)+X_actual)*4
+    add     x14, x0, x14        // x14 = &pixel(Y_actual,X_actual)
+
+    stur    w10, [x14]          // escribimos color
+
+continuar_columna:
+    add     x7, x7, #1          // deltaX++
+    b       ciclo_columnas_circulo
+
+siguiente_fila:
+    add     x5, x5, #1          // deltaY++
+    b       ciclo_filas_circulo
+
+fin_circulo:
+    ret
+
+
+
+dibujar_cuerpo:
+
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
+
+    add x1, x1, #16
+    mov x4, #4
+    mov x10, x26
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    mov x3, #24
+    mov x10, x27
+    bl pintar_rectangulo
+
+    add x2, x2, #4
+    mov x4, #8
+    mov x3, #8
+    mov x10, x25
+    bl pintar_rectangulo
+
+    sub x2, x2, #12
+    mov x3, #16
+    mov x10, x23
+    bl pintar_rectangulo
+
+    sub x2, x2, #16
+    mov x3, #8
+    mov x4, #16
+    mov x10, x24
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    add x2, x2, #4
+    mov x3, #136
+    mov x4, #4
+    mov x10, x23
+    bl pintar_rectangulo
+
+    add x2, x2, #4
+    mov x3, #8
+    mov x4, #8
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    mov x10, x26
+    bl pintar_rectangulo
+
+    add x2, x2, #8
+    mov x10, x27
+    mov x4, #4
+    mov x3, #16
+    bl pintar_rectangulo
+
+    mov x3, #8
+    mov x4, #8
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    add x2, x2, #8
+    mov x3, #20
+    mov x4, #6
+    mov x10, x16
+    bl pintar_rectangulo
+
+    add x2, x2, #6
+    mov x10, x27
+    mov x4, #4
+    bl pintar_rectangulo
+
+    sub x2, x2, #10
+    add x1, x1, #4
+    mov x3, #44
+    mov x10, x17
+    bl pintar_rectangulo
+
+    sub x2, x2, #4
+    mov x3, #8
+    mov x4, #4
+    mov x10, x27
+    bl pintar_rectangulo
+
+    sub x2, x2, #8
+    mov x3, #104
+    mov x4, #8
+    bl pintar_rectangulo
+
+    sub x2, x2, #8
+    mov x4, #4
+    mov x3, #104
+    mov x10, x23
+    bl pintar_rectangulo
+
+    add x1, x1, #40
+    sub x2, x2, #4
+    mov x3, #48
+    bl pintar_rectangulo
+
+    sub x1, x1, #32
+    add x2, x2, #20
+    mov x3, #36
+    mov x4, #8
+    mov x10, x17
+    bl pintar_rectangulo
+
+    mov x4, #4
+    mov x3, #60
+    bl pintar_rectangulo
+
+    add x1, x1, #36
+    add x2, x2, #4
+    mov x3, #44
+    mov x4, #12
+    mov x10, x16
+    bl pintar_rectangulo
+
+    
+    sub x2, x2, #8
+    mov x3, #4
+    mov x10, x25
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    bl pintar_rectangulo
+
+    sub x1, x1, #12
+    add x2, x2, #12
+    mov x4, #4
+    mov x10, x16
+    bl pintar_rectangulo
+
+    add x2, x2, #4
+    mov x10, x17
+    bl pintar_rectangulo
+
+    add x2, x2, #4
+    mov x3, #48
+    bl pintar_rectangulo
+    
+    add x1, x1, #28
+    sub x2, x2, #16
+    mov x10, x16
+    mov x4, #6
+    mov x3, #36
+    bl pintar_rectangulo
+
+    add x1, x1, #36
+    mov x3, #8
+    mov x4, #6
+    mov x10, x17
+    bl pintar_rectangulo
+
+    sub x1, x1, #24
+    add x2, x2, #6
+    mov x10, x25
+    mov x3, #8
+    mov x4, #4
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    mov x10, x17
+    mov x4, #4
+    bl pintar_rectangulo
+
+    add x2, x2, #4
+    mov x10, x23
+    bl pintar_rectangulo
+    
+    add x1, x1, #8
+    sub x2, x2, #12
+    mov x4, #2
+    mov x3, #24
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    sub x2, x2, #2
+    mov x3, #16
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    sub x2, x2, #4
+    mov x4, #4
+    mov x3, #8
+    bl pintar_rectangulo
+
+    sub x1, x1, #8
+    mov x10, x23
+    bl pintar_rectangulo
+
+    ldp x29, x30, [sp], #16     // Restaura x30
+
+    ret
+
+
+dibujar_aletas1:
+
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
+
+
+    sub x1, x1, #62
+    add x2, x2, #16
+    mov x10, x25
+    mov x3, #8
+    mov x4, #10
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    mov x3, #16
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #12
+    add x2, x2, #10
+    mov x3, #20
+    bl pintar_rectangulo
+    
+    sub x1, x1, #4
+    add x2, x2, #8
+    mov x3, #16
+    mov x4, #8
+    mov x10, x25
+    bl pintar_rectangulo
+
+    add x1, x1, #24
+    sub x2, x2, #8
+    mov x3, #4
+    mov x4, #4
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    add x2, x2, #2
+    mov x3, #22
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    add x2, x2, #4
+    mov x10, x25
+    mov x4, #6
+    mov x3, #6
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    mov x10, x22
+    mov x3, #8
+    bl pintar_rectangulo
+    
+    add x2, x2, #6
+    mov x10, x25
+    mov x4, #2
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    sub x2, x2, #6
+    mov x10, x24
+    mov x3, #4
+    mov x4, #8
+    bl pintar_rectangulo
+
+    ldp x29, x30, [sp], #16     // Restaura x30
+
+    ret
+
+dibujar_cola2:
+
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
+
+
+    // ------ COLORES PARA EL TIBURON
+
+    movz x16, #0xffff, lsl #16
+    movk x16, #0xffff            // BLANCO 
+    movz x17, #0x00d3, lsl #16
+    movk x17, #0xdbde            // GRIS +++CLARO
+    movz x21, #0x003b, lsl #16
+    movk x21, #0x414a            // GRIS 
+    movz x22, #0x002c, lsl #16
+    movk x22, #0x3136            // GRIS OSCURO
+    movz x23, #0x0056, lsl #16   
+    movk x23, #0x5f68            // GRIS CLARO
+    movz x24, #0x0033, lsl #16
+    movk x24, #0x3a42            // GRIS +OSCURO
+    movz x25, #0x0012, lsl #16   
+    movk x25, #0x1315            // GRIS ++OSCURO
+    movz x26, #0x009b, lsl #16   
+    movk x26, #0xa3a6            // GRIS +CLARO
+    movz x27, #0x00bf, lsl #16
+    movk x27, #0xc8ca            // GRIS ++CLARO
+
+    ldp x29, x30, [sp], #16     // Restaura x30
+
+
+    ret
+
+dibujar_cola1:
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
+
+    // ------ COLORES PARA EL TIBURON
+
+    movz x16, #0xffff, lsl #16
+    movk x16, #0xffff            // BLANCO 
+    movz x17, #0x00d3, lsl #16
+    movk x17, #0xdbde            // GRIS +++CLARO
+    movz x21, #0x003b, lsl #16
+    movk x21, #0x414a            // GRIS 
+    movz x22, #0x002c, lsl #16
+    movk x22, #0x3136            // GRIS OSCURO
+    movz x23, #0x0056, lsl #16   
+    movk x23, #0x5f68            // GRIS CLARO
+    movz x24, #0x0033, lsl #16
+    movk x24, #0x3a42            // GRIS +OSCURO
+    movz x25, #0x0012, lsl #16   
+    movk x25, #0x1315            // GRIS ++OSCURO
+    movz x26, #0x009b, lsl #16   
+    movk x26, #0xa3a6            // GRIS +CLARO
+    movz x27, #0x00bf, lsl #16
+    movk x27, #0xc8ca            // GRIS ++CLARO
+
+    mov x10, x21
+    mov x3, #8
+    mov x4, #8
+    bl pintar_rectangulo
+
+    add x2, x2, #8
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1,#8
+    mov x10, x23
+    bl pintar_rectangulo
+
+    add x2, x2, #8
+    mov x10, x22
+    mov x3, #4
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    mov x10, x23
+    mov x3, #12
+    bl pintar_rectangulo
+
+    add x2, x2, #8
+    mov x10, x22
+    mov x3, #4
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    mov x10, x21
+    mov x3, #8
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    mov x10, x23
+    bl pintar_rectangulo
+
+    sub x1, x1, #8
+    add x2, x2, #8
+    mov x4, #24
+    mov x10, x24
+    bl pintar_rectangulo
+
+    add x2, x2, #24
+    mov x4, #8
+    mov x10, x25
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    sub x2, x2, #24
+    mov x3, #24
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x2, x2, #8
+    mov x3, #8
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    mov x3, #16
+    mov x4, #4
+    mov x10, x23
+    bl pintar_rectangulo
+
+    add x2, x2, #4
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #8
+    add x2, x2, #4
+    mov x3, #8
+    mov x4, #8
+    mov x10, x25
+    bl pintar_rectangulo
+
+    ldp x29, x30, [sp], #16     // Restaura x30
+    ret
+
+dibujar_ojo1:
+
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
+
+    sub x1, x1, #24
+    mov x10, x25
+    mov x3, #8
+    mov x4, #6
+    bl pintar_rectangulo
+
+    sub x1, x1, #2
+    mov x3, #2
+    mov x4, #2
+    bl pintar_rectangulo
+
+    ldp x29, x30, [sp], #16     // Restaura x30
+
+    ret
+
+
+dibujar_ojo2:
+
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
+
+
+    sub x1, x1, #24
+    mov x10, x25
+    mov x3, #8
+    mov x4, #6
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    mov x3, #2
+    mov x4, #2
+    bl pintar_rectangulo
+
+    ldp x29, x30, [sp], #16     // Restaura x30
+
+    ret
+
+dibujar_aletas2:
+
+    ret
+
+hacer_tiempo:
+    ldr x0, =0x3FFFFFF  // Valor empírico para QEMU (probado en RPi 4)
+1:
+    subs x0, x0, #1
+    b.ne 1b
+    ret
+
+// ---------------------------------------------------------
+// Función: dibujar_bob
+// Entrada:
+//   x1  = X_base (esquina superior izquierda de Bob pequeño)
+//   x2  = Y_base
+//
+// Dibuja un Bob Esponja de unos 20×30 píxeles, usando solo
+// un par de rectángulos para cuerpo y ojos, y un pequeño
+// rectángulo para la boca.
+// ---------------------------------------------------------
+
+dibujar_bob:
+    stp  x29, x30, [sp, #-16]!    // Guardar FP y LR
+    mov  x29, sp
+    mov x22,x1 //nos facilita no tener q recaclular la pos inicial
+    mov x23,x2 //tmb lo guardamos
+
+    // 1. Cuerpo amarillo (20×30)
+    mov  x3, #20        // ancho
+    mov  x4, #30        // alto
+    movz x10, #0xF700   // w10 = 0x0000FF00 (byte alto = 0x00FF)
+    movk x10, #0x00FF, lsl #16
+    // → w10 final = 0x00FFFF00 (amarillo)
+    bl   pintar_rectangulo
+
+    // 2. Ojos 
+    // Ojo izquierdo, desplazado 4px a derecha y 6px abajo dentro del cuerpo
+    add  x1, x1, #4     // x = X_base + 4
+    add  x2, x2, #6     // y = Y_base + 6
+    mov  x3, #4
+    mov  x4, #4
+    movz x10, #0xFFFF   // w10 = 0xFFFFFF
+    movk x10, #0x00FF, lsl #16
+    // → w10 final = 0x00FFFFFF (blanco)
+    bl   pintar_rectangulo
+
+    // Ojo der 10px a la derecha de X_base (4 + 6)
+    add  x1, x1, #8     // x = (X_base + 4) + 6 = X_base + 10 (tenemos en cuenta la usma anterior)
+    // y sigue siendo Y_base + 6 no se modifica esta donde nos interesa
+    mov  x3, #4
+    mov  x4, #4
+    movz x10, #0xFFFF
+    movk x10, #0x00FF, lsl #16
+    bl   pintar_rectangulo
+
+    // 3. Boca (6×2)
+    // Restaurar x1 a X_base + 7 (aprox centro menos 3px)
+    sub  x1, x1, #10    // x = (X_base + 10) - 10 = X_base
+    add  x1, x1, #7     // x = X_base + 7
+    // y = Y_base + 20 (parte inferior del cuerpo, 30 - 8)
+    sub  x2, x2, #6     // x2 = (Y_base + 6) - 6 = Y_base
+    add  x2, x2, #20    // x2 = Y_base + 20
+    mov  x3, #6
+    mov  x4, #2
+    movz x10, #0x0000   // w10 = 0x00000000 (negro)
+    movk x10, #0x0000, lsl #16
+    bl   pintar_rectangulo
+
+    //4 Pantalones azules (20x10)
+    //necesito posicionarme 30 pixeles abajo de la pos nicial
+    mov x1, x22
+    mov x2, x23
+    add x2, x2, #30
+    add x3, x3, #15
+    add x4, x4, #5
+    movz x10, #0x00FF   // w10 =(azul)
+    movk x10, #0x0000, lsl #16
+    bl   pintar_rectangulo
+
+
+    //5 piernas
+    //desde x2 solo bajamos 9 pixeles para hacer las piernas
+    add x2, x2, #9
+    add x1,x1,#3
+    mov x3,#3
+    mov x4,#10
+    movz x10, #0xF700   // w10 = 0x0000FF00 (byte alto = 0x00FF)
+    movk x10, #0x00FF, lsl #16
+    bl pintar_rectangulo
+
+
+    //la otra pierna solo sumamos x1
+    add x1, x1, #12
+    bl pintar_rectangulo
+    // Restaurar stack y salir
+    ldp  x29, x30, [sp], #16
+    ret
+
+
+// ---------------------------------------------------------
+// Función: dibujar_casa_pina
+// Entrada:
+//   x20 = framebuffer_base (no se modifica jamás)
+//   x1  = X_base (esquina superior izquierda de la casa de piña)
+//   x2  = Y_base
+//
+// Dibuja una casa de piña de ~30×40 px, con cuerpo naranja,
+// puerta marrón, ventanas celestes y hojas verdes. Cada rectángulo
+// recarga X_base/Y_base desde x5/x6 para evitar “desfase”.
+// ---------------------------------------------------------
+dibujar_casa_pina:
+    stp  x29, x30, [sp, #-16]!    // Guardar FP y LR
+    mov  x29, sp
+
+    // 1) Guardar X_base y Y_base en registros aparte para no perderlos
+    mov  x22, x1        // x5 = X_base
+    mov  x23, x2        // x6 = Y_base
+
+    // ─── 2) Cuerpo de la piña (30×40) ───
+    mov  x3, #30       // ancho  = 30
+    mov  x4, #40       // alto   = 40
+    movz x10, #0xA500  // w10 = 0x0000A500
+    movk x10, #0x00FF, lsl #16
+    // → w10 = 0x00FFA500 (naranja)
+    bl   pintar_rectangulo
+    // ─── 3) Puerta marrón (10×15) ───
+    //   X = X_base + 10, Y = Y_base + 25
+    add  x1, x1, #10   // x1 = X_base + 10 
+    add  x2, x2, #25   // x2 = Y_base + 25
+    mov  x3, #10       // ancho  = 10
+    mov  x4, #15       // alto   = 15
+    movz x10, #0x4513  // w10 = 0x00004513
+    movk x10, #0x008B, lsl #16
+    // → w10 = 0x008B4513 (marrón)
+    bl   pintar_rectangulo
+    // ─── 4) Ventana izquierda (6×6, celeste) ───
+    //   X = X_base + 5, Y = Y_base + 10
+    mov  x1, x22 //restauro el xbase
+    add  x1, x1, #5    // x1 = x_base + 5
+    mov  x2, x23
+    add  x2, x2, #10   // x2 = Y_base + 10
+    mov  x3, #6        // ancho  = 6
+    mov  x4, #6        // alto   = 6
+    movz x10, #0xD8E6  // w10 = 0x0000D8E6
+    movk x10, #0x00AD, lsl #16
+    // → w10 = 0x00ADD8E6 (celeste)
+    bl   pintar_rectangulo
+
+    // ─── 5) Ventana derecha (6×6, celeste) ───
+    //   X = X_base + 19, Y = Y_base + 10
+    mov  x1, x22
+    add  x1, x1, #19   // x1 = X_base + 19
+    mov  x2, x23
+    add  x2, x2, #10   // x2 = Y_base + 10
+    mov  x3, #6        // ancho  = 6
+    mov  x4, #6        // alto   = 6
+    movz x10, #0xD8E6
+    movk x10, #0x00AD, lsl #16
+    bl   pintar_rectangulo
+
+    // ─── 6) Hoja izquierda verde (8×8) ───
+    //   X = X_base + 6, Y = Y_base – 8
+    mov  x1, x22
+    add  x1, x1, #6    // x1 = X_base + 6
+    mov  x2, x23
+    sub  x2, x2, #8    // x2 = Y_base - 8
+    mov  x3, #8        // ancho  = 8
+    mov  x4, #8        // alto   = 8
+    movz x10, #0xFF00  // w10 = 0x0000FF00
+    movk x10, #0x0000, lsl #16
+    // → w10 = 0x0000FF00 (verde puro)
+    bl   pintar_rectangulo
+
+    // ─── 7) Hoja central verde (8×8) ───
+    //   X = X_base + 11, Y = Y_base – 12
+    mov  x1, x22
+    add  x1, x1, #11   // x1 = X_base + 11
+    mov  x2, x23
+    sub  x2, x2, #12   // x2 = Y_base - 12
+    mov  x3, #8
+    mov  x4, #8
+    movz x10, #0xFF00
+    movk x10, #0x0000, lsl #16
+    bl   pintar_rectangulo
+
+    // ─── 8) Hoja derecha verde (8×8) ───
+    //   X = X_base + 16, Y = Y_base – 8
+    mov  x1, x22
+    add  x1, x1, #16   // x1 = X_base + 16
+    mov  x2, x23
+    sub  x2, x2, #8    // x2 = Y_base - 8
+    mov  x3, #8
+    mov  x4, #8
+    movz x10, #0xFF00
+    movk x10, #0x0000, lsl #16
+    bl   pintar_rectangulo
+
+    // Restaurar stack y regresar
+    ldp  x29, x30, [sp], #16
+    ret
+
+dibujar_XXXXXX:
+
+    stp  x29, x30, [sp, #-16]!  
+
+    // DEFINI TUS COLORES
+
+    movz x16, #0xffff, lsl #16
+    movk x16, #0xffff            // BLANCO 
+    movz x17, #0x00d3, lsl #16
+    movk x17, #0xdbde            // GRIS +++CLARO
+    movz x21, #0x003b, lsl #16
+    movk x21, #0x414a            // GRIS 
+    movz x22, #0x002c, lsl #16
+    movk x22, #0x3136            // GRIS OSCURO
+    movz x23, #0x0056, lsl #16   
+    movk x23, #0x5f68            // GRIS CLARO
+    movz x24, #0x0033, lsl #16
+    movk x24, #0x3a42            // GRIS +OSCURO
+    movz x25, #0x0012, lsl #16   
+    movk x25, #0x1315            // GRIS ++OSCURO
+    movz x26, #0x009b, lsl #16   
+    movk x26, #0xa3a6            // GRIS +CLARO
+    movz x27, #0x00bf, lsl #16
+    movk x27, #0xc8ca            // GRIS ++CLARO
+
+
+    mov x1, #0            // luego borrar estas lineas una vez inicializado
+    mov x2, #0            // idem
+
+    //-------DEFINI TU FUNCION AQUI-------
+
+    ldp  x29, x30, [sp], #16
+
+    ret
+
+detalles_arena:
+
+    stp  x29, x30, [sp, #-16]!  
+
+    // DEFINI TUS COLORES
+
+    movz x16, #0xffff, lsl #16
+    movk x16, #0xffff            // BLANCO 
+    movz x17, #0x00d3, lsl #16
+    movk x17, #0xdbde            // GRIS +++CLARO
+    movz x21, #0x003b, lsl #16
+    movk x21, #0x414a            // GRIS 
+    movz x22, #0x002c, lsl #16
+    movk x22, #0x3136            // GRIS OSCURO
+    movz x23, #0x0056, lsl #16   
+    movk x23, #0x5f68            // GRIS CLARO
+    movz x24, #0x0033, lsl #16
+    movk x24, #0x3a42            // GRIS +OSCURO
+    movz x25, #0x0012, lsl #16   
+    movk x25, #0x1315            // GRIS ++OSCURO
+    movz x26, #0x009b, lsl #16   
+    movk x26, #0xa3a6            // GRIS +CLARO
+    movz x27, #0x00bf, lsl #16
+    movk x27, #0xc8ca            // GRIS ++CLARO
+
+
+    mov x1, #0            // luego borrar estas lineas una vez inicializado
+    mov x2, #0            // idem
+
+    //-------DEFINI TU FUNCION AQUI-------
+
+    ldp  x29, x30, [sp], #16
+
+
+    ret
+    
+
+// DEJAR ESTA LINEA AL ULTIMO 

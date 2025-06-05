@@ -15,19 +15,20 @@ main:
     // Guardar puntero base del framebuffer
     mov     x20, x0                // x20 = base del framebuffer
 
-    
 
-// SETEO EL CONTADOR EN 0
-mov x0, x20
-mov x28, #0
-mov x18, #230
-mov x19, #180
+mov x0, x20     // framebuffer en 0
+mov x28, #0     // SETEO EL CONTADOR EN 0
+mov x18, #230   // POS X para el tiburon
+mov x19, #180   // POS Y para el tiburon
+
+///////////////////////////////////////
+//LOOP DONDE OCURRE TODA LA ANIMACION//
+///////////////////////////////////////
 
 loop_principal:
 
-    // ------------------------------
-    // bucle para pintar el FONDO del mar
-    // ------------------------------
+    // BUCLE PARA PINTAR EL FONDO DEL mar
+
     movz    x10, 0x0042, lsl 16    // x10 = 0x00420000
     movk    x10, 0x6BAF, lsl 0     // x10 = 0x00426BAF  (color = 0x426BAF)
 
@@ -46,10 +47,20 @@ loop_principal:
         subs    x2, x2, #1
         b.ne    fondo_loop_y
 
+    
+    // PRIMERA CAPA - Suelo Marino
+
         bl pintar_arena
 
         l0:
             bl detalles_arena
+
+
+    // SEGUNDA CAPA - Peces
+
+
+
+    // TERCERA CAPA - Tiburon
 
         and x11, x28, #0b100     // x11 = bits 2 de x28 (valores 0 o 4)
         cmp x11, #0
@@ -78,10 +89,7 @@ loop_principal:
         fin_tiburon:
             
 
-
-
- 
-
+    // DELAY e INCREMENTO del contador
 
     add x28, x28, #1
     bl hacer_tiempo
@@ -895,84 +903,6 @@ hacer_tiempo:
 // rectángulo para la boca.
 // ---------------------------------------------------------
 
-dibujar_bob:
-    stp  x29, x30, [sp, #-16]!    // Guardar FP y LR
-    mov  x29, sp
-    mov x22,x1 //nos facilita no tener q recaclular la pos inicial
-    mov x23,x2 //tmb lo guardamos
-
-    // 1. Cuerpo amarillo (20×30)
-    mov  x3, #20        // ancho
-    mov  x4, #30        // alto
-    movz x10, #0xF700   // w10 = 0x0000FF00 (byte alto = 0x00FF)
-    movk x10, #0x00FF, lsl #16
-    // → w10 final = 0x00FFFF00 (amarillo)
-    bl   pintar_rectangulo
-
-    // 2. Ojos 
-    // Ojo izquierdo, desplazado 4px a derecha y 6px abajo dentro del cuerpo
-    add  x1, x1, #4     // x = X_base + 4
-    add  x2, x2, #6     // y = Y_base + 6
-    mov  x3, #4
-    mov  x4, #4
-    movz x10, #0xFFFF   // w10 = 0xFFFFFF
-    movk x10, #0x00FF, lsl #16
-    // → w10 final = 0x00FFFFFF (blanco)
-    bl   pintar_rectangulo
-
-    // Ojo der 10px a la derecha de X_base (4 + 6)
-    add  x1, x1, #8     // x = (X_base + 4) + 6 = X_base + 10 (tenemos en cuenta la usma anterior)
-    // y sigue siendo Y_base + 6 no se modifica esta donde nos interesa
-    mov  x3, #4
-    mov  x4, #4
-    movz x10, #0xFFFF
-    movk x10, #0x00FF, lsl #16
-    bl   pintar_rectangulo
-
-    // 3. Boca (6×2)
-    // Restaurar x1 a X_base + 7 (aprox centro menos 3px)
-    sub  x1, x1, #10    // x = (X_base + 10) - 10 = X_base
-    add  x1, x1, #7     // x = X_base + 7
-    // y = Y_base + 20 (parte inferior del cuerpo, 30 - 8)
-    sub  x2, x2, #6     // x2 = (Y_base + 6) - 6 = Y_base
-    add  x2, x2, #20    // x2 = Y_base + 20
-    mov  x3, #6
-    mov  x4, #2
-    movz x10, #0x0000   // w10 = 0x00000000 (negro)
-    movk x10, #0x0000, lsl #16
-    bl   pintar_rectangulo
-
-    //4 Pantalones azules (20x10)
-    //necesito posicionarme 30 pixeles abajo de la pos nicial
-    mov x1, x22
-    mov x2, x23
-    add x2, x2, #30
-    add x3, x3, #15
-    add x4, x4, #5
-    movz x10, #0x00FF   // w10 =(azul)
-    movk x10, #0x0000, lsl #16
-    bl   pintar_rectangulo
-
-
-    //5 piernas
-    //desde x2 solo bajamos 9 pixeles para hacer las piernas
-    add x2, x2, #9
-    add x1,x1,#3
-    mov x3,#3
-    mov x4,#10
-    movz x10, #0xF700   // w10 = 0x0000FF00 (byte alto = 0x00FF)
-    movk x10, #0x00FF, lsl #16
-    bl pintar_rectangulo
-
-
-    //la otra pierna solo sumamos x1
-    add x1, x1, #12
-    bl pintar_rectangulo
-    // Restaurar stack y salir
-    ldp  x29, x30, [sp], #16
-    ret
-
-
 // ---------------------------------------------------------
 // Función: dibujar_casa_pina
 // Entrada:
@@ -1130,4 +1060,4 @@ detalles_arena:
     ret
     
 
-// DEJAR ESTA LINEA AL ULTIMO 
+// DEJAR ESTA LINEA AL ULTIMO

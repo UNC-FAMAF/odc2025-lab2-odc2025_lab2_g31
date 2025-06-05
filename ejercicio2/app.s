@@ -15,6 +15,16 @@ main:
     // Guardar puntero base del framebuffer
     mov     x20, x0                // x20 = base del framebuffer
 
+    
+
+// SETEO EL CONTADOR EN 0
+mov x0, x20
+mov x28, #0
+mov x18, #230
+mov x19, #180
+
+loop_principal:
+
     // ------------------------------
     // bucle para pintar el FONDO del mar
     // ------------------------------
@@ -24,133 +34,62 @@ main:
     mov     x0, x20                // x0 = framebuffer
     mov     x2, SCREEN_HEIGHT      // filas restantes
 
-fondo_loop_y:
-    mov     x1, SCREEN_WIDTH       // columnas restantes
-fondo_loop_x:
-    stur    w10, [x0]              // escribir color
-    add     x0, x0, #4             // avanzar 1 píxel (4 bytes)
-    subs    x1, x1, #1
-    b.ne    fondo_loop_x
-    subs    x2, x2, #1
-    b.ne    fondo_loop_y
 
-    //  bucle para representar la ARENA
-    // ------------------------------
-    movz    x10, 0x00D1, lsl 16    // x10 = 0x00D10000
-    movk    x10, 0xC986, lsl 0     // x10 = 0x00D1C986  (color = 0xD1C986)
+    fondo_loop_y:
+        mov     x1, SCREEN_WIDTH       // columnas restantes
+    
+    fondo_loop_x:
+        stur    w10, [x0]              // escribir color
+        add     x0, x0, #4             // avanzar 1 píxel (4 bytes)
+        subs    x1, x1, #1
+        b.ne    fondo_loop_x
+        subs    x2, x2, #1
+        b.ne    fondo_loop_y
 
-    // Calcular desplazamiento a la fila 400: (400 * 640 * 4)
-    mov     x1, #400
-    lsl     x12, x1, #9            // x12 = 400 * 512
-    lsl     x13, x1, #7            // x13 = 400 * 128
-    add     x12, x12, x13          // x12 = 400 * 640
-    lsl     x12, x12, #2           // x12 = 400 * 640 * 4 bytes
+        bl pintar_arena
 
-    add     x0, x20, x12           // x0 = framebuffer + offset fila 400
-    mov     x2, #80                // 80 filas de arena
+        l0:
+            bl detalles_arena
 
-arena_loop_y:
-    mov     x1, SCREEN_WIDTH       // 640 columnas
-arena_loop_x:
-    stur    w10, [x0]
-    add     x0, x0, #4
-    subs    x1, x1, #1
-    b.ne    arena_loop_x
-    subs    x2, x2, #1
-    b.ne    arena_loop_y
+        and x11, x28, #0b100     // x11 = bits 2 de x28 (valores 0 o 4)
+        cmp x11, #0
+        beq l_tiburon1
+        
+        mov x11, x1
+        mov x12, x2
+        mov x1, x18
+        mov x2, x19
+        bl dibujar_tiburon2
+        mov x1, x11
+        mov x2, x12
+        add x18, x18, #2
+        b fin_tiburon
+        
+        l_tiburon1:
+            mov x11, x1
+            mov x12, x2
+            mov x1, x18
+            mov x2, x19
+            bl dibujar_tiburon1
+            mov x1, x11
+            mov x2, x12
+            sub x18, x18, #2
 
-    // ------------------------------
-    // ALGA HORIZONTAL(prueba) de 80×20
-    // ------------------------------
-    movz    x10, 0x002F, lsl 16    // x10 = 0x002F0000
-    movk    x10, 0x7E41, lsl 0     // x10 = 0x002F7E41  (color = 0x2F7E41)
-
-    // Parámetros alga horizontal: X0=100, Y0=200, ancho=80, alto=20
-    mov     x1, #100               // X0
-    mov     x2, #200               // Y0
-    mov     x3, #80                // ancho = 80
-    mov     x4, #20                // alto  = 20
-    bl      pintar_rectangulo
-
-    // --------------------------
-    // PRIMERA HOJA ALGA1 de 10×80 
-    // ------------------------------
-    // Reutilizamos el mismo color en x10
-    // Parámetros alga vertical: X0=300, Y0=200, ancho=10, alto=80
-    mov     x1, #300               // X0 (por ejemplo, más a la derecha)
-    mov     x2, #200               // Y0
-    mov     x3, #10                // ancho = 20 (más estrecho)
-    mov     x4, #80                // alto  = 80 (más alto)
-    bl      pintar_rectangulo
-    //------------------------
-    // SEGUNDA HOJA ALGA1 10X80
-    // ------------------------------
-    // Parámetros alga vertical: X0=290, Y0=120, ancho=10, alto=80
-    mov     x1, #290               // X0 (por ejemplo, más a la derecha)
-    mov     x2, #120               // Y0
-    mov     x3, #10                // ancho = 20 (más estrecho)
-    mov     x4, #80                // alto  = 80 (más alto)
-    bl      pintar_rectangulo
-    //------------------------
-    // TERCERA HOJA ALGA1 10X80
-    // ------------------------------
-    // Parámetros alga vertical: X0=300, Y0=40, ancho=10, alto=80
-    mov     x1, #300              // X0 (por ejemplo, más a la derecha)
-    mov     x2, #40               // Y0
-    mov     x3, #10                // ancho = 20 
-    mov     x4, #80                // alto  = 80
-    bl      pintar_rectangulo
+        fin_tiburon:
+            
 
 
-    // ------ Círculo de tamano radio 20 ------
-    mov     x0, x20             // framebuffer_base
-    mov     x1, #200            // X_centro
-    mov     x2, #120            // Y_centro
-    mov     x3, #20             // radio en píxeles
-    mov     x10, #0xFFFFFF      // color blanco
-    bl      pintar_circulo
 
-    // ------ Círculo de tamano radio 10
-    mov     x0, x20             // framebuffer_base
-    mov     x1, #300            // X_centro
-    mov     x2, #200            // Y_centro
-    mov     x3, #10             // radio = 10
-    mov     x10, #0x0000FF      // color azul
-    bl      pintar_circulo
-
-
-    // TIBURON ANIMADO
-
-    mov x0, x20
-    mov x1, #240
-    mov x2, #200
  
-    bl dibujar_cola1
-    bl dibujar_cuerpo
-    bl dibujar_ojo1
-    bl dibujar_aletas1
-
-    // AQUI LLAMAR A TU FUNCION QUE HACE TU dibujo 
-
-    bl dibujar_XXXXXX
-
-    //
-
-    mov x1, #0
-    mov x2, #400
-    bl detalles_arena
 
 
-    // GPIOs
+    add x28, x28, #1
+    bl hacer_tiempo
+    bl hacer_tiempo
+    bl hacer_tiempo
+    
+    b loop_principal
 
-
-    mov     x9, GPIO_BASE         // x9 = base de GPIO
-    str     wzr, [x9, GPIO_GPFSEL0]
-    ldr     w10, [x9, GPIO_GPLEV0]
-    and     w11, w10, #0b10
-    lsr     w11, w11, #1
-
-    // ------------------------------
     // Infinite Loop
 
 InfLoop:
@@ -303,6 +242,31 @@ siguiente_fila:
 fin_circulo:
     ret
 
+dibujar_tiburon1:
+
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
+
+    bl dibujar_cola1
+    bl dibujar_cuerpo
+    bl dibujar_ojo1
+    bl dibujar_aletas1
+
+    ldp x29, x30, [sp], #16     // Restaura x30
+
+    ret
+
+dibujar_tiburon2:
+
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
+
+    bl dibujar_cola2
+    bl dibujar_cuerpo
+    bl dibujar_ojo2
+    bl dibujar_aletas2
+
+    ldp x29, x30, [sp], #16     // Restaura x30
+
+    ret
 
 
 dibujar_cuerpo:
@@ -594,8 +558,96 @@ dibujar_cola2:
     movz x27, #0x00bf, lsl #16
     movk x27, #0xc8ca            // GRIS ++CLARO
 
-    ldp x29, x30, [sp], #16     // Restaura x30
+    add x2, x2, #2
+    add x1, x1, #10
+    mov x10, x21
+    mov x3, #4
+    mov x4, #8
+    bl pintar_rectangulo
 
+    add x2, x2, #8
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1,#4
+    mov x10, x23
+    bl pintar_rectangulo
+
+    add x2, x2, #8
+    mov x10, x22
+    mov x3, #2
+    bl pintar_rectangulo
+
+    add x1, x1, #2
+    mov x10, x23
+    mov x3, #6
+    bl pintar_rectangulo
+
+    add x2, x2, #8
+    mov x10, x22
+    mov x3, #2
+    bl pintar_rectangulo
+
+    add x1, x1, #2
+    mov x10, x21
+    mov x3, #4
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    mov x3, #6
+    mov x10, x23
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    sub x1, x1, #8
+    add x2, x2, #8
+    mov x4, #24
+    mov x10, x24
+    bl pintar_rectangulo
+
+    add x2, x2, #24
+    mov x4, #8
+    mov x10, x25
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    sub x2, x2, #24
+    mov x3, #4
+    mov x4, #12
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    mov x3, #24
+    bl pintar_rectangulo
+
+    add x2, x2, #8
+    add x1, x1, #8
+    mov x3, #16
+    mov x4, #4
+    mov x10, x23
+    bl pintar_rectangulo
+
+    add x2, x2, #4
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #10
+    add x2, x2, #4
+    mov x3, #4
+    mov x4, #8
+    mov x10, x25
+    bl pintar_rectangulo
+
+    sub x2, x2, #4
+    mov x4, #4
+    mov x3, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x2, x2, #4      // ajusto el valor de Y
+
+    ldp x29, x30, [sp], #16     // Restaura x30
 
     ret
 
@@ -732,10 +784,22 @@ dibujar_ojo2:
     mov x4, #6
     bl pintar_rectangulo
 
-    add x1, x1, #8
+    add x1, x1, #6
+    sub x2, x2, #2
     mov x3, #2
     mov x4, #2
     bl pintar_rectangulo
+
+    sub x1, x1, #2
+    sub x2, x2, #2
+    mov x3, #2
+    mov x4, #2
+    bl pintar_rectangulo
+
+
+    add x1, x1, #4
+    add x2, x2, #4
+
 
     ldp x29, x30, [sp], #16     // Restaura x30
 
@@ -743,12 +807,80 @@ dibujar_ojo2:
 
 dibujar_aletas2:
 
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
+
+
+    sub x1, x1, #72
+    add x2, x2, #16
+    mov x10, x25
+    mov x3, #8
+    mov x4, #10
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    mov x3, #16
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #14
+    add x2, x2, #10
+    mov x3, #18
+    bl pintar_rectangulo
+    
+    sub x1, x1, #6
+    add x2, x2, #6
+    mov x3, #12
+    mov x4, #8
+    mov x10, x25
+    bl pintar_rectangulo
+
+    add x1, x1, #24
+    sub x2, x2, #8
+    mov x3, #4
+    mov x4, #4
+    bl pintar_rectangulo
+
+    add x1, x1, #12
+    add x2, x2, #4
+    mov x3, #22
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    add x2, x2, #4
+    mov x10, x25
+    mov x4, #4
+    mov x3, #6
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    mov x10, x22
+    mov x3, #8
+    bl pintar_rectangulo
+    
+    add x2, x2, #2
+    mov x10, x25
+    mov x4, #1
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    sub x2, x2, #2
+    mov x10, x24
+    mov x3, #4
+    mov x4, #4
+    bl pintar_rectangulo
+
+    sub x1, x1, #4
+    sub x2, x2, #2
+
+    ldp x29, x30, [sp], #16     // Restaura x30
+
     ret
 
 hacer_tiempo:
-    ldr x0, =0x3FFFFFF  // Valor empírico para QEMU (probado en RPi 4)
+    ldr x13, =0x3FFFFFF  // Valor empírico para QEMU (probado en RPi 4)
 1:
-    subs x0, x0, #1
+    subs x13, x13, #1
     b.ne 1b
     ret
 
@@ -943,36 +1075,19 @@ dibujar_casa_pina:
     ldp  x29, x30, [sp], #16
     ret
 
-dibujar_XXXXXX:
+pintar_arena:
 
     stp  x29, x30, [sp, #-16]!  
 
-    // DEFINI TUS COLORES
+    movz x16, 0x00D1, lsl 16    // x10 = 0x00D10000
+    movk x16, 0xC986, lsl 0     // x10 = 0x00D1C986  (color = 0xD1C986)
 
-    movz x16, #0xffff, lsl #16
-    movk x16, #0xffff            // BLANCO 
-    movz x17, #0x00d3, lsl #16
-    movk x17, #0xdbde            // GRIS +++CLARO
-    movz x21, #0x003b, lsl #16
-    movk x21, #0x414a            // GRIS 
-    movz x22, #0x002c, lsl #16
-    movk x22, #0x3136            // GRIS OSCURO
-    movz x23, #0x0056, lsl #16   
-    movk x23, #0x5f68            // GRIS CLARO
-    movz x24, #0x0033, lsl #16
-    movk x24, #0x3a42            // GRIS +OSCURO
-    movz x25, #0x0012, lsl #16   
-    movk x25, #0x1315            // GRIS ++OSCURO
-    movz x26, #0x009b, lsl #16   
-    movk x26, #0xa3a6            // GRIS +CLARO
-    movz x27, #0x00bf, lsl #16
-    movk x27, #0xc8ca            // GRIS ++CLARO
-
-
-    mov x1, #0            // luego borrar estas lineas una vez inicializado
-    mov x2, #0            // idem
-
-    //-------DEFINI TU FUNCION AQUI-------
+    mov x1, #0
+    mov x2, #400
+    mov x4, #80
+    mov x3, SCREEN_WIDTH           // 80 filas de arena
+    mov x10, x16
+    bl pintar_rectangulo
 
     ldp  x29, x30, [sp], #16
 

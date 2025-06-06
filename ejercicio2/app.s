@@ -165,37 +165,36 @@ obtener_direccion_pixel:
 //   x10 = color (0xRRGGBB)
 // ------------------------------------------------------------
 pintar_rectangulo:
-    // Guardar ancho y alto en registros temporales
-    mov     x5, x3           // x5 = ancho
-    mov     x6, x4           // x6 = alto
+    // x1 = X0, x2 = Y0
+    // x3 = ancho, x4 = alto
+    // x10 = color, x20 = framebuffer
 
-    // Calcular dirección inicial (X0,Y0):
-    // offset_bytes = ((Y0 * SCREEN_WIDTH) + X0) * 4
-    lsl     x12, x2, #9      // x12 = Y0 * 512
-    lsl     x13, x2, #7      // x13 = Y0 * 128
-    add     x12, x12, x13    // x12 = Y0 * 640
-    add     x12, x12, x1     // x12 = Y0*640 + X0
-    lsl     x12, x12, #2     // x12 = (Y0*640 + X0) * 4
-    add     x12, x20, x12    // x12 = framebuffer + offset
+    // Calcular dirección inicial
+    lsl     x5, x2, #9       // Y0 * 512
+    lsl     x6, x2, #7       // Y0 * 128
+    add     x5, x5, x6       // Y0 * 640
+    add     x5, x5, x1       // + X0
+    lsl     x5, x5, #2       // * 4
+    add     x5, x20, x5      // x5 = puntero inicial
 
-    mov     x11, x6          // x11 = filas restantes (alto)
-    mov     x7,  x5          // x7  = columnas restantes (ancho)
+    mov     x6, x4           // x6 = alto (filas restantes)
 
 pintar_filas:
-    mov     x13, x7          // x13 = contador de columnas (ancho)
-    mov     x14, x12         // puntero actual en la fila
+    mov     x7, x3           // x7 = ancho (columnas restantes)
+    mov     x8, x5           // x8 = puntero actual en fila
 
 pintar_columnas:
-    stur    w10, [x14]       // escribir color
-    add     x14, x14, #4     // avanzar 1 píxel en X
-    subs    x13, x13, #1
+    stur    w10, [x8]
+    add     x8, x8, #4
+    subs    x7, x7, #1
     b.ne    pintar_columnas
 
-    // Siguiente fila: sumar SCREEN_WIDTH * 4 bytes = 640*4
-    add     x12, x12, #(SCREEN_WIDTH * 4)
-    subs    x11, x11, #1
+    // siguiente fila: avanzar 640*4 bytes
+    add     x5, x5, #(640*4)
+    subs    x6, x6, #1
     b.ne    pintar_filas
     ret
+
 
 
 // ------------------------------------------------------------
@@ -208,73 +207,72 @@ pintar_columnas:
 //   x3 = radio
 //   x10 = color
 // ------------------------------------------------------------
+
 pintar_circulo:
-    // calcular r^2
-    mul     x11, x3, x3         // x11 = radio^2
+    // x0 = framebuffer
+    // x1 = X_centro
+    // x2 = Y_centro
+    // x3 = radio
+    // x10 = color
+
+    // radio^2
+    mul     x11, x3, x3         // x11 = r^2
 
     // deltaY = -radio
-    mov     x5, x3
-    neg     x5, x5              // x5 = -radio
+    neg     x4, x3              // x4 = deltaY inicial
 
-ciclo_filas_circulo:
-    cmp     x5, x3
-    b.gt    fin_circulo         // si deltaY > radio, terminamos
+ciclo_filas:
+    cmp     x4, x3
+    b.gt    fin_circulo         // deltaY > radio → salir
 
-    // dy2 = deltaY^2
-    mul     x6, x5, x5          // x6 = dy^2
+    mul     x5, x4, x4          // dy^2
 
     // deltaX = -radio
-    mov     x7, x3
-    neg     x7, x7              // x7 = -radio
+    neg     x6, x3
 
-ciclo_columnas_circulo:
-    cmp     x7, x3
-    b.gt    siguiente_fila      // si deltaX > radio, pasamos a la siguiente fila
+ciclo_columnas:
+    cmp     x6, x3
+    b.gt    siguiente_fila
 
-    // dx2 = deltaX^2
-    mul     x8, x7, x7          // x8 = dx^2
+    mul     x7, x6, x6          // dx^2
+    add     x8, x5, x7          // dx^2 + dy^2
+    cmp     x8, x11
+    b.gt    continuar_columna
 
-    // suma = dx^2 + dy^2
-    add     x9, x6, x8
-    cmp     x9, x11
-    b.gt    continuar_columna   // si fuera mayor que r^2, no pintamos
-
-    // ---------------------------
-    // Pintar el píxel en (X_centro + deltaX, Y_centro + deltaY)
-    // Verificamos límites: 0 ≤ X < 640, 0 ≤ Y < 480
-    // ---------------------------
-    add     x12, x1, x7         // X_actual = X_centro + deltaX
-    cmp     x12, #0
+    // X = X_centro + deltaX
+    add     x7, x1, x6
+    cmp     x7, #0
     blt     continuar_columna
-    cmp     x12, #639           // SCREEN_WIDTH - 1
-    bgt     continuar_columna
+    cmp     x7, #639
+    b.gt    continuar_columna
 
-    add     x13, x2, x5         // Y_actual = Y_centro + deltaY
-    cmp     x13, #0
+    // Y = Y_centro + deltaY
+    add     x8, x2, x4
+    cmp     x8, #0
     blt     continuar_columna
-    cmp     x13, #479           // SCREEN_HEIGHT - 1
-    bgt     continuar_columna
+    cmp     x8, #479
+    b.gt    continuar_columna
 
-    // offset_bytes = ((Y_actual * SCREEN_WIDTH) + X_actual) * 4
-    lsl     x14, x13, #9        // Y_actual * 512
-    lsl     x15, x13, #7        // Y_actual * 128
-    add     x14, x14, x15       // x14 = Y_actual * 640
-    add     x14, x14, x12       // x14 = Y_actual*640 + X_actual
-    lsl     x14, x14, #2        // x14 = ((Y_actual*640)+X_actual)*4
-    add     x14, x0, x14        // x14 = &pixel(Y_actual,X_actual)
-
-    stur    w10, [x14]          // escribimos color
+    // offset = ((Y * 640) + X) * 4
+    lsl     x9, x8, #9        // Y * 512
+    lsl     x12, x8, #7       // Y * 128
+    add     x9, x9, x12       // Y * 640
+    add     x9, x9, x7        // + X
+    lsl     x9, x9, #2        // * 4
+    add     x9, x0, x9        // dirección final
+    stur    w10, [x9]
 
 continuar_columna:
-    add     x7, x7, #1          // deltaX++
-    b       ciclo_columnas_circulo
+    add     x6, x6, #1
+    b       ciclo_columnas
 
 siguiente_fila:
-    add     x5, x5, #1          // deltaY++
-    b       ciclo_filas_circulo
+    add     x4, x4, #1
+    b       ciclo_filas
 
 fin_circulo:
     ret
+
 
 dibujar_tiburon1:
 

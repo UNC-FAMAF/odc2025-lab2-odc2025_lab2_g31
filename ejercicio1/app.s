@@ -130,37 +130,36 @@ obtener_direccion_pixel:
 //   x10 = color (0xRRGGBB)
 // ------------------------------------------------------------
 pintar_rectangulo:
-    // Guardar ancho y alto en registros temporales
-    mov     x5, x3           // x5 = ancho
-    mov     x6, x4           // x6 = alto
+    // x1 = X0, x2 = Y0
+    // x3 = ancho, x4 = alto
+    // x10 = color, x20 = framebuffer
 
-    // Calcular dirección inicial (X0,Y0):
-    // offset_bytes = ((Y0 * SCREEN_WIDTH) + X0) * 4
-    lsl     x12, x2, #9      // x12 = Y0 * 512
-    lsl     x13, x2, #7      // x13 = Y0 * 128
-    add     x12, x12, x13    // x12 = Y0 * 640
-    add     x12, x12, x1     // x12 = Y0*640 + X0
-    lsl     x12, x12, #2     // x12 = (Y0*640 + X0) * 4
-    add     x12, x20, x12    // x12 = framebuffer + offset
+    // Calcular dirección inicial
+    lsl     x5, x2, #9       // Y0 * 512
+    lsl     x6, x2, #7       // Y0 * 128
+    add     x5, x5, x6       // Y0 * 640
+    add     x5, x5, x1       // + X0
+    lsl     x5, x5, #2       // * 4
+    add     x5, x20, x5      // x5 = puntero inicial
 
-    mov     x11, x6          // x11 = filas restantes (alto)
-    mov     x7,  x5          // x7  = columnas restantes (ancho)
+    mov     x6, x4           // x6 = alto (filas restantes)
 
 pintar_filas:
-    mov     x13, x7          // x13 = contador de columnas (ancho)
-    mov     x14, x12         // puntero actual en la fila
+    mov     x7, x3           // x7 = ancho (columnas restantes)
+    mov     x8, x5           // x8 = puntero actual en fila
 
 pintar_columnas:
-    stur    w10, [x14]       // escribir color
-    add     x14, x14, #4     // avanzar 1 píxel en X
-    subs    x13, x13, #1
+    stur    w10, [x8]
+    add     x8, x8, #4
+    subs    x7, x7, #1
     b.ne    pintar_columnas
 
-    // Siguiente fila: sumar SCREEN_WIDTH * 4 bytes = 640*4
-    add     x12, x12, #(SCREEN_WIDTH * 4)
-    subs    x11, x11, #1
+    // siguiente fila: avanzar 640*4 bytes
+    add     x5, x5, #(640*4)
+    subs    x6, x6, #1
     b.ne    pintar_filas
     ret
+
 
 
 // ------------------------------------------------------------

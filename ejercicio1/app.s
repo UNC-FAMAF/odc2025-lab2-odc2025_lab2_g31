@@ -1147,6 +1147,1638 @@ dibujar_XXXXXX:
     ret
 
 detalles_arena:
+    // Inicialización de colores
+    movz x21, #0x00B9, lsl #16    // Color arena 1
+    movk x21, #0xAF77, lsl #0
+
+    movz x22, #0x00D1, lsl #16    // Color arena 2
+    movk x22, #0xB886, lsl #0
+
+    movz x23, #0x00BC, lsl #16 // color arena para las letras "ODC 2025"
+    movk x23, #0x9845, lsl #0
+
+    // Tamaño del rectángulo
+    mov x3, #12
+    mov x4, #12
+
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21          
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22          
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+
+    sub x1, x1, #630  // volvemos a inicializar los detalles pero mas abajo
+    add x2, x2, #15
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    sub x2, x2, #20
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #30
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x1, x1, #630
+    sub x2, x2, #15
+    mov x10, x21
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x22
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    add x2, x2, #10
+    mov x10, x21
+    bl pintar_rectangulo
+
+    // letras hechas con la arena
+
+    mov x3, #5  //tamaño de los granos de arena
+    mov x4, #5
+
+    sub x1, x1, #10
+    sub x2, x2, #30
+    mov x10, x23  // color de las letras
+    bl pintar_rectangulo
+
+    add x1, x1, #5
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #5
+    add x2, x2, #1
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    add x1, x1, #1
+    add x2, x2, #5
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #5
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #5
+    bl pintar_rectangulo
+
+    sub x1, x1, #1
+    add x2, x2, #5
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #5
+    add x2, x2, #1
+    bl pintar_rectangulo
+
+    sub x1, x1, #5
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #1
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #1
+    sub x2, x2, #5
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    sub x2, x2, #5
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    sub x2, x2, #5
+    bl pintar_rectangulo
+
+    add x1, x1, #1
+    sub x2, x2, #5
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    sub x2, x2, #3
+    bl pintar_rectangulo
+
+    add x1, x1, #47
+    sub x2, x2, #1
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #5
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #5
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #5
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #5
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #5
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #2
+    bl pintar_rectangulo
+
+    sub x1, x1, #2
+    sub x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #2
+    add x2, x2, #1
+    bl pintar_rectangulo
+
+    sub x1, x1, #2
+    add x2, x2, #1
+    bl pintar_rectangulo
+
+    sub x1, x1, #2
+    add x2, x2, #1
+    bl pintar_rectangulo
+
+    sub x1, x1, #2
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    sub x1, x1, #2
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    sub x1, x1, #2
+    sub x2, x2, #1
+    bl pintar_rectangulo
+
+    sub x1, x1, #2
+    sub x2, x2, #1
+    bl pintar_rectangulo
+
+    sub x1, x1, #2
+    sub x2, x2, #1
+    bl pintar_rectangulo
+
+    sub x1, x1, #0
+    sub x2, x2, #1
+    bl pintar_rectangulo
+
+    sub x1, x1, #0
+    sub x2, x2, #2
+    bl pintar_rectangulo
+
+    sub x1, x1, #0
+    sub x2, x2, #2
+    bl pintar_rectangulo
+
+    add x1, x1, #1
+    sub x2, x2, #1
+    bl pintar_rectangulo
+
+    add x1, x1, #1
+    sub x2, x2, #2
+    bl pintar_rectangulo
+
+    add x1, x1, #2
+    sub x2, x2, #2
+    bl pintar_rectangulo
+
+    add x1, x1, #1
+    sub x2, x2, #1
+    bl pintar_rectangulo
+
+    add x1, x1, #2
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #1
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #2
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #2
+    add x2, x2, #1
+    bl pintar_rectangulo
+
+    add x1, x1, #2
+    add x2, x2, #1
+    bl pintar_rectangulo
+
+
+
+    ////////Numero 2 ----------- /////
+    add x1, x1, #33
+    sub x2, x2, #13
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #2
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #2
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #2
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #2
+    bl pintar_rectangulo
+
+    sub x1, x1, #1
+    add x2, x2, #5
+    bl pintar_rectangulo
+
+    sub x1, x1, #0
+    add x2, x2, #5
+    bl pintar_rectangulo
+
+    sub x1, x1, #0
+    add x2, x2, #4
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #2
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #2
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #2
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    sub x2, x2, #2
+    bl pintar_rectangulo
+
+    add x1, x1, #2
+    sub x2, x2, #2
+    bl pintar_rectangulo
+
+    add x1, x1, #25
+    sub x2, x2, #15
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    sub x2, x2, #3
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #2
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    sub x2, x2, #2
+    bl pintar_rectangulo
+
+
+    //// Numero 0 --------------- /////////
+
+    add x1, x1, #15
+    add x2, x2, #2
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #2
+    sub x2, x2, #3
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    sub x2, x2, #3
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    sub x2, x2, #3
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    sub x2, x2, #3
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    sub x2, x2, #3
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    sub x2, x2, #3
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    sub x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #2
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #0
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #0
+    bl pintar_rectangulo
+
+    sub x1, x1, #1
+    sub x2, x2, #0
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+
+
+    //// ------- numero 2 ----- ////////
+    add x1, x1, #25
+    sub x2, x2, #18
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    sub x2, x2, #3
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #2
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    sub x2, x2, #2
+    bl pintar_rectangulo
+
+
+
+    /// Numero 5 --------- ////
+
+    add x1, x1, #28
+    sub x2, x2, #21
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    sub x1, x1, #6
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    add x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    add x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    add x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    sub x2, x2, #3
+    bl pintar_rectangulo
+
+    sub x1, x1, #3
+    sub x2, x2, #0
+    bl pintar_rectangulo
+
+    add x1, x1, #0
+    sub x2, x2, #3
+    bl pintar_rectangulo
+
+    /// finalizacion de las siglas "OdC 2025" --------------- //////
+
 
     stp  x29, x30, [sp, #-16]!  
 

@@ -39,6 +39,11 @@ fondo_loop_x:
 
     bl pintar_arena
 
+    bl serie_algas
+
+    mov x1, #420
+    mov x2, #400
+    bl dibujar_casa_pina
 
 
 
@@ -3347,5 +3352,191 @@ pintar_arena:
     ldp  x29, x30, [sp], #16
 
     ret
+
+    // ------------------------------------------------------------
+// Función: dibujar_algas
+//   Dibuja un conjunto de rectángulos simulando una alga marina.
+// Entradas:
+//   x0 = framebuffer_base
+//   x1 = X_centro
+//   x2 = Y_centro
+//   x10 = color (sobrescrito en esta función)
+// ------------------------------------------------------------
+dibujar_algas:
+       
+        stp x29, x30, [sp, #-16]!
+        mov x29, sp
+
+
+        // Establecer color verde (0x00158233)
+        movk x10, #0x0015 , lsl #16
+        movk x10, #0x8233
+
+        // Primer rectángulo pequeño en la base
+        mov x3, #10              // ancho
+        mov x4, #10              // alto
+        bl pintar_rectangulo
+
+        // Rectángulo largo vertical, desplazado arriba y a la derecha
+        mov x4, #60              
+        add x1, x1, #10          // mover a la derecha
+        sub x2, x2, #50          // subir
+        bl pintar_rectangulo
+
+        // Rectángulo más corto, movido arriba y a la derecha
+        add x1, x1, #10
+        mov x4, #40
+        add x2, x2 ,#20          // bajar un poco
+        bl pintar_rectangulo
+
+        // Rectángulo delgado, hacia la derecha
+        add x1, x1, #10
+        add x2, x2, #10
+        mov x4, #20
+        bl pintar_rectangulo
+
+        // Rectángulo mediano, arriba a la derecha
+        add x1, x1, #10
+        sub x2, x2, #20
+        mov x4, #30
+        bl pintar_rectangulo
+
+        // Rectángulo central, bajando
+        sub x1, x1, #10
+        sub x2, x2, #40
+        mov x4, #40
+        bl pintar_rectangulo
+
+        // Rectángulo superior derecho
+        add x1, x1, #10
+        sub x2, x2, #20
+        bl pintar_rectangulo
+
+        // Rectángulo pequeño, arriba a la derecha
+        add x1, x1, #10
+        add x2, x2, #10
+        mov x4, #10
+        bl pintar_rectangulo
+
+        // Rectángulo superior izquierdo
+        mov x4, #30
+        sub x2, x2, #30
+        bl pintar_rectangulo
+
+        // Rama izquierda inferior
+        sub x1, x1, #50
+        add x2, x2, #30
+        mov x4, #60
+        bl pintar_rectangulo
+
+        // Rama izquierda media
+        sub x1, x1, #10
+        mov x4, #40
+        add x2, x2, #10
+        bl pintar_rectangulo
+
+        // Rama derecha superior
+        add x1, x1, #20
+        mov x4,#70
+        sub x2, x2, #60
+        bl pintar_rectangulo
+
+        // Rama derecha media
+        add x1, x1, #10
+        add x2, x2, #10
+        mov x4, #40
+        bl pintar_rectangulo
+
+        // Rama central final
+        sub x1, x1, #20
+        sub x2, x2, #30
+        mov x4, #30
+        bl pintar_rectangulo
+
+    // Restaurar registros de frame y volver
+    ldp  x29, x30, [sp], #16
+    ret
+
+
+// ------------------------------------------------------------
+// Función: dibujar_burbujas
+//   Dibuja una burbuja con efectos visuales de profundidad y brillo
+// Entradas:
+//   x0  = framebuffer_base (desde x20)
+//   x1  = X centro
+//   x2  = Y centro
+//   x3  = radio
+// ------------------------------------------------------------
+dibujar_burbujas:
+
+    mov x0, x20                 // Cargar framebuffer base desde x20
+    stp x29, x30, [sp, #-16]!
+
+    // Dibujar el círculo exterior con color celeste claro (0x6aa0ab)
+    movz x10, #0x006a , lsl #16
+    movk x10, #0xa0ab
+    bl pintar_circulo          // Llamar para dibujar la burbuja principal
+
+    // Reducir radio para dibujar un círculo interior (efecto de profundidad)
+    sub x3, x3, #2            
+
+    // Dibujar el círculo interior más oscuro (color 0x2fa4b9)
+    movz x10, #0x002f , lsl #16
+    movk x10, #0xa4b9
+    bl pintar_circulo
+
+    // Guardar coordenadas originales del centro
+    mov x11, x1                // x11 = centro x
+    mov x12, x2                // x12 = centro y
+
+    // Calcular desplazamiento para el reflejo brillante
+    lsr x4, x3, #1             // x4 = radio / 2
+
+    // Posicionar punto brillante arriba a la izquierda
+    sub x1, x1, x4             // x_bright = centro_x - radio / 2
+    sub x2, x2, x4             // y_bright = centro_y - radio / 2
+
+    // Establecer color blanco (0x00ffff, para el reflejo)
+    movz x10, #0x00ff , lsl #16
+    movk x10, #0xffff
+
+    // Dibujar un pequeño rectángulo blanco simulando reflejo
+    mov x4, #4                 // altura = 4
+    mov x3, #4                 // ancho = 4
+    bl pintar_rectangulo
+
+    // Dibujar un segundo reflejo más abajo a la derecha
+    add x1, x1, #4             // desplazar a la derecha
+    sub x2, x2, #4             // desplazar arriba
+    bl pintar_rectangulo
+
+    // Restaurar registros de frame y volver
+    ldp x29, x30, [sp], #16
+    ret
+
+
+serie_algas:
+
+    stp  x29, x30, [sp, #-16]!  
+
+    mov x27, #5        // Contador del ciclo
+    mov x1, #40
+    mov x2, #400
+    bl dibujar_algas
+ciclo_mover_x1:
+    add x1, x1, #100       // Mover x1 40 píxeles a la derecha
+    mov x2, #400
+    bl dibujar_algas
+
+    subs x27, x27, #1       // Decrementar contador y actualizar flags
+    b.ne ciclo_mover_x1   // Si x5 != 0, repetir ciclo
+
+
+    ldp  x29, x30, [sp], #16
+    ret
+
+//
+
+
 
 // DEJAR ESTA LINEA AL ULTIMO 

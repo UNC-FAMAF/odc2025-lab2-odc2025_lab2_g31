@@ -38,6 +38,8 @@ fondo_loop_x:
     mov x2, #400
 
     bl pintar_arena
+    bl detalles_arena
+    bl letras_odc
 
 
 
@@ -914,6 +916,9 @@ dibujar_XXXXXX:
     ret
 
 detalles_arena:
+
+    stp  x29, x30, [sp, #-16]!    // Guardar FP y LR
+
     // Inicialización de colores
     movz x21, #0x00B9, lsl #16    // Color arena 1
     movk x21, #0xAF77, lsl #0

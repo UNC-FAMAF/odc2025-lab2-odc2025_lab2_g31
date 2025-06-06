@@ -501,6 +501,65 @@ dibujar_aletas1:
     mov x4, #8
     bl pintar_rectangulo
 
+    sub x1, x1, #40
+    sub x2, x2, #42
+    mov x3, #24
+    mov x4, #2
+    mov x10, x22
+    bl pintar_rectangulo
+
+    sub x2, x2, #2
+    mov x3, #20
+    bl pintar_rectangulo
+
+    sub x2, x2, #4
+    mov x3, #16
+    mov x4, #4
+    bl pintar_rectangulo
+
+    sub x2, x2, #4
+    mov x3, #8
+    bl pintar_rectangulo
+
+    sub x2, x2, #4
+    mov x3, #4
+    bl pintar_rectangulo
+
+    sub x2, x2, #8
+    mov x3, #8
+    mov x4, #8
+    mov x10, x23
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    mov x3, #4
+    mov x4, #2
+    mov x10, x27
+    bl pintar_rectangulo
+
+    add x2, x2, #8
+    mov x10, x23
+    mov x3, #12
+    mov x4, #4
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    add x2, x2, #4
+    bl pintar_rectangulo
+
+    add x1, x1, #8
+    add x2, x2, #4
+    mov x3, #8
+    mov x4, #4
+    bl pintar_rectangulo
+
+    add x1, x1, #4
+    add x2, x2, #2
+    mov x3, #4
+    mov x4, #4
+    bl pintar_rectangulo
+
+
     ldp x29, x30, [sp], #16     // Restaura x30
 
     ret

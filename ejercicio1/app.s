@@ -40,6 +40,8 @@ fondo_loop_x:
     bl pintar_arena
     bl detalles_arena
     bl letras_odc
+    bl serie_algas
+
 
 
 
@@ -55,18 +57,243 @@ fondo_loop_x:
     bl dibujar_ojo1
     bl dibujar_aletas2
 
+    //dibujar calamar y declarar el color
     mov x0, x20
-    mov x1, #220
-    mov x2, #200
-    movz    x26, 0x00D1, lsl 16    // x10 = 0x00D10000
-    movk    x26, 0xC986, lsl 0     // x10 = 0x00D1C986
+    mov x1, #50
+    mov x2, #20
+    movz    x26, 0x00FC, lsl 16    // x10 = 0x00D10000
+    movk    x26, 0x53A0, lsl 0     // x10 = 0x00D1C986
     bl dibujar_cuerpo_calamar
     bl dibujar_tentaculos_calamar
 
-    mov x1, #220
-    mov x2, #150
+//dibujar otro calamar y declarar el color
+    mov x0, x20
+    mov x1, #520
+    mov x2, #220
+    movz    x26, 0x0097, lsl 16    // x10 = 0x00D10000
+    movk    x26, 0x05f9, lsl 0     // x10 = 0x00D1C986
+    bl dibujar_cuerpo_calamar
+    bl dibujar_tentaculos_calamar_MOVIENDOSE
+
+    mov x1, #420
+    mov x2, #420
     bl dibujar_cangrejo_cuerpo
 
+    //colores y pos del pez 1
+
+
+    movz    x25, 0x0090, lsl 16    //color del cuepo del pez
+    movk    x25, 0x0C3F, lsl 0     //
+
+
+    movz    x21, 0x00FF, lsl 16    // color aletas
+    movk    x21, 0x5733, lsl 0     // 
+
+    movz    x22, 0x00FF, lsl 16    //pico]
+    movk    x22, 0x3500, lsl 0     //
+
+
+    movz    x23, 0x0000, lsl 16    // OJO
+    movk    x23, 0x0000, lsl 0     //
+
+    movz    x24, 0x0058, lsl 16    // COLA
+    movk    x24, 0x1845, lsl 0     //  
+
+    mov x1, #500
+    mov x2, #20
+
+    bl dibujar_pez
+
+   //colores y pos del pez 1
+
+
+
+
+    movz    x21, 0x004a, lsl 16    // color cuerpo
+    movk    x21, 0x05f9, lsl 0     // 
+
+    movz    x22, 0x00ff, lsl 16    //aleta
+    movk    x22, 0xfe1f, lsl 0     //
+
+
+    movz    x23, 0x0000, lsl 16    // pupilas ojo
+    movk    x23, 0x0000, lsl 0     // 
+
+    movz    x24, 0x00ff, lsl 16    // COLA
+    movk    x24, 0xca13, lsl 0     //  
+
+    mov x1, #100
+    mov x2, #200
+
+    bl dibujar_pez_2
+
+//dibujar mas peces
+
+    movz    x21, 0x00d1, lsl 16    // color cuerpo
+    movk    x21, 0x05f9, lsl 0     // 
+
+    movz    x22, 0x00ff, lsl 16    //aleta
+    movk    x22, 0xfe1f, lsl 0     //
+
+
+    movz    x23, 0x0000, lsl 16    // pupilas ojo
+    movk    x23, 0x0000, lsl 0     // 
+
+    movz    x24, 0x00ff, lsl 16    // COLA
+    movk    x24, 0xca13, lsl 0     //  
+
+    mov x1, #400
+    mov x2, #300
+
+    bl dibujar_pez_2
+
+    movz    x21, 0x00f9, lsl 16    // color cuerpo
+    movk    x21, 0x0590, lsl 0     // 
+
+    movz    x22, 0x00ff, lsl 16    //aleta
+    movk    x22, 0xfe1f, lsl 0     //
+
+
+    movz    x23, 0x0000, lsl 16    // pupilas ojo
+    movk    x23, 0x0000, lsl 0     // 
+
+    movz    x24, 0x00ff, lsl 16    // COLA
+    movk    x24, 0xca13, lsl 0     //  
+
+    mov x1, #420
+    mov x2, #100
+
+    bl dibujar_pez_2
+
+
+    movz    x21, 0x0005, lsl 16    // color cuerpo
+    movk    x21, 0x0566, lsl 0     // 
+
+    movz    x22, 0x00ff, lsl 16    //aleta
+    movk    x22, 0xfe1f, lsl 0     //
+
+
+    movz    x23, 0x0000, lsl 16    // pupilas ojo
+    movk    x23, 0x0000, lsl 0     // 
+
+    movz    x24, 0x00ff, lsl 16    // COLA
+    movk    x24, 0xca13, lsl 0     //  
+
+    mov x1, #420
+    mov x2, #340
+
+    bl dibujar_pez_2
+
+    movz    x21, 0x00f9, lsl 16    // color cuerpo
+    movk    x21, 0x0590, lsl 0     // 
+
+    movz    x22, 0x00ff, lsl 16    //aleta
+    movk    x22, 0xfe1f, lsl 0     //
+
+
+    movz    x23, 0x0000, lsl 16    // pupilas ojo
+    movk    x23, 0x0000, lsl 0     // 
+
+    movz    x24, 0x00ff, lsl 16    // COLA
+    movk    x24, 0xca13, lsl 0     //  
+
+    mov x1, #420
+    mov x2, #100
+
+    bl dibujar_pez_2
+
+    //dibujas carunemes de peces
+    
+    movz    x21, 0x0005, lsl 16    // color cuerpo
+    movk    x21, 0xf966, lsl 0     // 
+
+    movz    x22, 0x00ff, lsl 16    //aleta
+    movk    x22, 0xfe1f, lsl 0     //
+
+
+    movz    x23, 0x0000, lsl 16    // pupilas ojo
+    movk    x23, 0x0000, lsl 0     // 
+
+    movz    x24, 0x00ff, lsl 16    // COLA
+    movk    x24, 0xca13, lsl 0     //  
+
+    mov x1, #420
+    mov x2, #80
+
+    bl dibujar_pez_2
+
+    movz    x21, 0x00e8, lsl 16    // color cuerpo
+    movk    x21, 0xf905, lsl 0     // 
+
+    movz    x22, 0x00ff, lsl 16    //aleta
+    movk    x22, 0xfe1f, lsl 0     //
+
+
+    movz    x23, 0x0000, lsl 16    // pupilas ojo
+    movk    x23, 0x0000, lsl 0     // 
+
+    movz    x24, 0x00ff, lsl 16    // COLA
+    movk    x24, 0xca13, lsl 0     //  
+
+    mov x1, #370
+    mov x2, #85
+
+    bl dibujar_pez_2
+
+
+    movz    x21, 0x00e8, lsl 16    // color cuerpo
+    movk    x21, 0xf905, lsl 0     // 
+
+    movz    x22, 0x00ff, lsl 16    //aleta
+    movk    x22, 0xfe1f, lsl 0     //
+
+
+    movz    x23, 0x0000, lsl 16    // pupilas ojo
+    movk    x23, 0x0000, lsl 0     // 
+
+    movz    x24, 0x00ff, lsl 16    // COLA
+    movk    x24, 0xca13, lsl 0     //  
+
+    mov x1, #370
+    mov x2, #85
+
+    bl dibujar_pez_2
+
+
+
+    //burbuajas del mago
+    mov x1,#330
+    mov x2,#100
+    mov x3,#6
+    bl dibujar_burbujas
+
+    mov x1,#200
+    mov x2,#200
+    mov x3,#8
+    bl dibujar_burbujas
+
+    mov x1,#150
+    mov x2,#150
+    mov x3,#10
+    bl dibujar_burbujas
+
+
+    mov x1,#250
+    mov x2,#130
+    mov x3,#10
+    bl dibujar_burbujas
+
+
+
+    mov x1,#390
+    mov x2,#200
+    mov x3,#10
+    bl dibujar_burbujas
+
+    mov x1,#480
+    mov x2,#100
+    mov x3,#10
+    bl dibujar_burbujas
     
 
     // AQUI LLAMAR A TU FUNCION QUE HACE TU dibujo 
@@ -75,11 +302,7 @@ fondo_loop_x:
 
     //
 
-    bl serie_algas
 
-    mov x1, #420
-    mov x2, #400
-    bl dibujar_casa_pina
 
     // GPIOs
 
@@ -2023,7 +2246,7 @@ letras_odc:
     stp  x29, x30, [sp, #-16]!  
 
     // letras hechas con la arena
-
+    sub x2,x2,#30
     mov x3, #5  //tamaño de los granos de arena
     mov x4, #5
     mov x10, x23  // color de las letras

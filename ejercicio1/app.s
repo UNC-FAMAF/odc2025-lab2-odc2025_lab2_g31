@@ -82,22 +82,22 @@ fondo_loop_x:
     //colores y pos del pez 1
 
 
-    movz    x25, 0x0090, lsl 16    //color del cuepo del pez
-    movk    x25, 0x0C3F, lsl 0     //
+    movz x25, 0x0090, lsl 16    //color del cuepo del pez
+    movk x25, 0x0C3F, lsl 0     //
 
 
-    movz    x21, 0x00FF, lsl 16    // color aletas
-    movk    x21, 0x5733, lsl 0     // 
+    movz x21, 0x00FF, lsl 16    // color aletas
+    movk x21, 0x5733, lsl 0     // 
 
-    movz    x22, 0x00FF, lsl 16    //pico]
-    movk    x22, 0x3500, lsl 0     //
+    movz x22, 0x00FF, lsl 16    //pico]
+    movk x22, 0x3500, lsl 0     //
 
 
-    movz    x23, 0x0000, lsl 16    // OJO
-    movk    x23, 0x0000, lsl 0     //
+    movz x23, 0x0000, lsl 16    // OJO
+    movk x23, 0x0000, lsl 0     //
 
-    movz    x24, 0x0058, lsl 16    // COLA
-    movk    x24, 0x1845, lsl 0     //  
+    movz x24, 0x0058, lsl 16    // COLA
+    movk x24, 0x1845, lsl 0     //  
 
     mov x1, #500
     mov x2, #20
@@ -109,18 +109,18 @@ fondo_loop_x:
 
 
 
-    movz    x21, 0x004a, lsl 16    // color cuerpo
-    movk    x21, 0x05f9, lsl 0     // 
+    movz x21, 0x004a, lsl 16    // color cuerpo
+    movk x21, 0x05f9, lsl 0     // 
 
-    movz    x22, 0x00ff, lsl 16    //aleta
-    movk    x22, 0xfe1f, lsl 0     //
+    movz x22, 0x00ff, lsl 16    //aleta
+    movk x22, 0xfe1f, lsl 0     //
 
 
-    movz    x23, 0x0000, lsl 16    // pupilas ojo
-    movk    x23, 0x0000, lsl 0     // 
+    movz x23, 0x0000, lsl 16    // pupilas ojo
+    movk x23, 0x0000, lsl 0     // 
 
-    movz    x24, 0x00ff, lsl 16    // COLA
-    movk    x24, 0xca13, lsl 0     //  
+    movz x24, 0x00ff, lsl 16    // COLA
+    movk x24, 0xca13, lsl 0     //  
 
     mov x1, #100
     mov x2, #200
@@ -129,36 +129,36 @@ fondo_loop_x:
 
 //dibujar mas peces
 
-    movz    x21, 0x00d1, lsl 16    // color cuerpo
-    movk    x21, 0x05f9, lsl 0     // 
+    movz x21, 0x00d1, lsl 16    // color cuerpo
+    movk x21, 0x05f9, lsl 0     // 
 
-    movz    x22, 0x00ff, lsl 16    //aleta
-    movk    x22, 0xfe1f, lsl 0     //
+    movz x22, 0x00ff, lsl 16    //aleta
+    movk x22, 0xfe1f, lsl 0     //
 
 
-    movz    x23, 0x0000, lsl 16    // pupilas ojo
-    movk    x23, 0x0000, lsl 0     // 
+    movz x23, 0x0000, lsl 16    // pupilas ojo
+    movk x23, 0x0000, lsl 0     // 
 
-    movz    x24, 0x00ff, lsl 16    // COLA
-    movk    x24, 0xca13, lsl 0     //  
+    movz x24, 0x00ff, lsl 16    // COLA
+    movk x24, 0xca13, lsl 0     //  
 
     mov x1, #400
     mov x2, #300
 
     bl dibujar_pez_2
 
-    movz    x21, 0x00f9, lsl 16    // color cuerpo
-    movk    x21, 0x0590, lsl 0     // 
+    movz x21, 0x00f9, lsl 16    // color cuerpo
+    movk x21, 0x0590, lsl 0     // 
 
-    movz    x22, 0x00ff, lsl 16    //aleta
-    movk    x22, 0xfe1f, lsl 0     //
+    movz x22, 0x00ff, lsl 16    //aleta
+    movk x22, 0xfe1f, lsl 0     //
 
 
-    movz    x23, 0x0000, lsl 16    // pupilas ojo
-    movk    x23, 0x0000, lsl 0     // 
+    movz x23, 0x0000, lsl 16    // pupilas ojo
+    movk x23, 0x0000, lsl 0     // 
 
-    movz    x24, 0x00ff, lsl 16    // COLA
-    movk    x24, 0xca13, lsl 0     //  
+    movz x24, 0x00ff, lsl 16    // COLA
+    movk x24, 0xca13, lsl 0     //  
 
     mov x1, #420
     mov x2, #100
@@ -166,36 +166,36 @@ fondo_loop_x:
     bl dibujar_pez_2
 
 
-    movz    x21, 0x0005, lsl 16    // color cuerpo
-    movk    x21, 0x0566, lsl 0     // 
+    movz x21, 0x0005, lsl 16    // color cuerpo
+    movk x21, 0x0566, lsl 0     // 
 
-    movz    x22, 0x00ff, lsl 16    //aleta
+    movz x22, 0x00ff, lsl 16    //aleta
     movk    x22, 0xfe1f, lsl 0     //
 
 
-    movz    x23, 0x0000, lsl 16    // pupilas ojo
-    movk    x23, 0x0000, lsl 0     // 
+    movz x23, 0x0000, lsl 16    // pupilas ojo
+    movk x23, 0x0000, lsl 0     // 
 
-    movz    x24, 0x00ff, lsl 16    // COLA
-    movk    x24, 0xca13, lsl 0     //  
+    movz x24, 0x00ff, lsl 16    // COLA
+    movk x24, 0xca13, lsl 0     //  
 
     mov x1, #420
     mov x2, #340
 
     bl dibujar_pez_2
 
-    movz    x21, 0x00f9, lsl 16    // color cuerpo
-    movk    x21, 0x0590, lsl 0     // 
+    movz x21, 0x00f9, lsl 16    // color cuerpo
+    movk x21, 0x0590, lsl 0     // 
 
-    movz    x22, 0x00ff, lsl 16    //aleta
-    movk    x22, 0xfe1f, lsl 0     //
+    movz x22, 0x00ff, lsl 16    //aleta
+    movk x22, 0xfe1f, lsl 0     //
 
 
-    movz    x23, 0x0000, lsl 16    // pupilas ojo
-    movk    x23, 0x0000, lsl 0     // 
+    movz x23, 0x0000, lsl 16    // pupilas ojo
+    movk x23, 0x0000, lsl 0     // 
 
-    movz    x24, 0x00ff, lsl 16    // COLA
-    movk    x24, 0xca13, lsl 0     //  
+    movz x24, 0x00ff, lsl 16    // COLA
+    movk x24, 0xca13, lsl 0     //  
 
     mov x1, #420
     mov x2, #100
@@ -204,36 +204,36 @@ fondo_loop_x:
 
     //dibujas carunemes de peces
     
-    movz    x21, 0x0005, lsl 16    // color cuerpo
-    movk    x21, 0xf966, lsl 0     // 
+    movz x21, 0x0005, lsl 16    // color cuerpo
+    movk x21, 0xf966, lsl 0     // 
 
-    movz    x22, 0x00ff, lsl 16    //aleta
-    movk    x22, 0xfe1f, lsl 0     //
+    movz x22, 0x00ff, lsl 16    //aleta
+    movk x22, 0xfe1f, lsl 0     //
 
 
-    movz    x23, 0x0000, lsl 16    // pupilas ojo
-    movk    x23, 0x0000, lsl 0     // 
+    movz x23, 0x0000, lsl 16    // pupilas ojo
+    movk x23, 0x0000, lsl 0     // 
 
-    movz    x24, 0x00ff, lsl 16    // COLA
-    movk    x24, 0xca13, lsl 0     //  
+    movz x24, 0x00ff, lsl 16    // COLA
+    movk x24, 0xca13, lsl 0     //  
 
     mov x1, #420
     mov x2, #80
 
     bl dibujar_pez_2
 
-    movz    x21, 0x00e8, lsl 16    // color cuerpo
-    movk    x21, 0xf905, lsl 0     // 
+    movz x21, 0x00e8, lsl 16    // color cuerpo
+    movk x21, 0xf905, lsl 0     // 
 
-    movz    x22, 0x00ff, lsl 16    //aleta
-    movk    x22, 0xfe1f, lsl 0     //
+    movz x22, 0x00ff, lsl 16    //aleta
+    movk x22, 0xfe1f, lsl 0     //
 
 
-    movz    x23, 0x0000, lsl 16    // pupilas ojo
-    movk    x23, 0x0000, lsl 0     // 
+    movz x23, 0x0000, lsl 16    // pupilas ojo
+    movk x23, 0x0000, lsl 0     // 
 
-    movz    x24, 0x00ff, lsl 16    // COLA
-    movk    x24, 0xca13, lsl 0     //  
+    movz x24, 0x00ff, lsl 16    // COLA
+    movk x24, 0xca13, lsl 0     //  
 
     mov x1, #370
     mov x2, #85
@@ -241,18 +241,18 @@ fondo_loop_x:
     bl dibujar_pez_2
 
 
-    movz    x21, 0x00e8, lsl 16    // color cuerpo
-    movk    x21, 0xf905, lsl 0     // 
+    movz x21, 0x00e8, lsl 16    // color cuerpo
+    movk x21, 0xf905, lsl 0     // 
 
-    movz    x22, 0x00ff, lsl 16    //aleta
-    movk    x22, 0xfe1f, lsl 0     //
+    movz x22, 0x00ff, lsl 16    //aleta
+    movk x22, 0xfe1f, lsl 0     //
 
 
-    movz    x23, 0x0000, lsl 16    // pupilas ojo
-    movk    x23, 0x0000, lsl 0     // 
+    movz  x23, 0x0000, lsl 16    // pupilas ojo
+    movk x23, 0x0000, lsl 0     // 
 
-    movz    x24, 0x00ff, lsl 16    // COLA
-    movk    x24, 0xca13, lsl 0     //  
+    movz x24, 0x00ff, lsl 16    // COLA
+    movk x24, 0xca13, lsl 0     //  
 
     mov x1, #370
     mov x2, #85
@@ -307,11 +307,11 @@ fondo_loop_x:
     // GPIOs
 
 
-    mov     x9, GPIO_BASE         // x9 = base de GPIO
-    str     wzr, [x9, GPIO_GPFSEL0]
-    ldr     w10, [x9, GPIO_GPLEV0]
-    and     w11, w10, #0b10
-    lsr     w11, w11, #1
+    mov x9, GPIO_BASE         // x9 = base de GPIO
+    str wzr, [x9, GPIO_GPFSEL0]
+    ldr w10, [x9, GPIO_GPLEV0]
+    and  w11, w10, #0b10
+    lsr w11, w11, #1
 
     // ------------------------------
     // Infinite Loop
@@ -329,60 +329,61 @@ InfLoop:
 //
 
 
-// ------------------------------------------------------------
+// ----------------------------
 // Función: obtener_direccion_pixel
-// Entradas: x0 = framebuffer_base, x1 = X, x2 = Y
-// Salida  : x0 = &pixel(X,Y)
-// ------------------------------------------------------------
+// Entradas:x0 = framebuffer_base, x1 = X, x2 = Y
+// Salida:x0 = &pixel(X,Y)
+// ---------------
 obtener_direccion_pixel:
-    lsl     x3, x1, #2            // x3 = X * 4
-    lsl     x4, x2, #9            // x4 = Y * 512
-    lsl     x5, x2, #7            // x5 = Y * 128
-    add     x6, x4, x5            // x6 = Y * (512 + 128) = Y * 640
-    lsl     x6, x6, #2            // x6 = Y * 640 * 4 bytes
-    add     x0, x0, x3            // x0 = framebuffer + X*4
-    add     x0, x0, x6            // x0 = framebuffer + Y*640*4 + X*4
+    lsl x3, x1, #2            // x3 = X * 4
+    lsl x4, x2, #9            // x4 = Y * 512
+    lsl x5, x2, #7            // x5 = Y * 128
+    add x6, x4, x5            // x6 = Y * (512 + 128) = Y * 640
+    lsl x6, x6, #2            // x6 = Y * 640 * 4 bytes
+    add x0, x0, x3            // x0 = framebuffer + X*4
+    add x0, x0, x6            // x0 = framebuffer + Y*640*4 + X*4
     ret
 
-// ------------------------------------------------------------
-// Función: pintar_rectangulo
+
+//-------------------
+// pintar_rectangulo
 // Entradas:
-//   x0 = framebuffer_base
-//   x1 = X0 (columna inicial)
-//   x2 = Y0 (fila inicial)
-//   x3 = ancho en píxeles
-//   x4 = alto en píxeles
-//   x10 = color (0xRRGGBB)
-// ------------------------------------------------------------
+//x0=framebuffer_base
+//x1=X0 col ini
+//x2=Y0 (fila inicial)
+//x3=ancho en píxeles
+//x4=alto en píxeles
+//x10 color
+
 pintar_rectangulo:
     // x1 = X0, x2 = Y0
     // x3 = ancho, x4 = alto
     // x10 = color, x20 = framebuffer
 
     // Calcular dirección inicial
-    lsl     x5, x2, #9       // Y0 * 512
-    lsl     x6, x2, #7       // Y0 * 128
-    add     x5, x5, x6       // Y0 * 640
-    add     x5, x5, x1       // + X0
-    lsl     x5, x5, #2       // * 4
-    add     x5, x20, x5      // x5 = puntero inicial
+    lsl x5, x2, #9   // Y0 * 512
+    lsl x6, x2, #7   // Y0 * 128
+    add x5, x5, x6   // Y0 * 640
+    add x5, x5, x1   // + X0
+    lsl x5, x5, #2    // * 4
+    add x5, x20, x5   // x5 = puntero inicial
 
-    mov     x6, x4           // x6 = alto (filas restantes)
+    mov x6, x4           // x6 = alto (filas restantes)
 
 pintar_filas:
-    mov     x7, x3           // x7 = ancho (columnas restantes)
-    mov     x8, x5           // x8 = puntero actual en fila
+    mov x7, x3           // x7 = ancho (columnas restantes)
+    mov x8, x5           // x8 = puntero actual en fila
 
 pintar_columnas:
-    stur    w10, [x8]
-    add     x8, x8, #4
-    subs    x7, x7, #1
-    b.ne    pintar_columnas
+    stur w10, [x8]
+    add x8, x8, #4
+    subs x7, x7, #1
+    b.ne pintar_columnas
 
     // siguiente fila: avanzar 640*4 bytes
-    add     x5, x5, #(640*4)
-    subs    x6, x6, #1
-    b.ne    pintar_filas
+    add x5, x5, #(640*4)
+    subs x6, x6, #1
+    b.ne pintar_filas
     ret
 
 
@@ -396,7 +397,6 @@ pintar_columnas:
 //   x2 = Y_centro
 //   x3 = radio
 //   x10 = color
-// ------------------------------------------------------------
 pintar_circulo:
     // x0 = framebuffer
     // x1 = X_centro
@@ -1182,107 +1182,6 @@ dibujar_bob:
     ret
 
 
-// ---------------------------------------------------------
-// Función: dibujar_casa_pina
-// Entrada:
-//   x20 = framebuffer_base (no se modifica jamás)
-//   x1  = X_base (esquina superior izquierda de la casa de piña)
-//   x2  = Y_base
-//
-// Dibuja una casa de piña de ~30×40 px, con cuerpo naranja,
-// puerta marrón, ventanas celestes y hojas verdes. Cada rectángulo
-// recarga X_base/Y_base desde x5/x6 para evitar “desfase”.
-// ---------------------------------------------------------
-dibujar_casa_pina:
-    stp  x29, x30, [sp, #-16]!    // Guardar FP y LR
-    mov  x29, sp
-
-    // 1) Guardar X_base y Y_base en registros aparte para no perderlos
-    mov  x22, x1        // x5 = X_base
-    mov  x23, x2        // x6 = Y_base
-
-    // ─── 2) Cuerpo de la piña (30×40) ───
-    mov  x3, #30       // ancho  = 30
-    mov  x4, #40       // alto   = 40
-    movz x10, #0xA500  // w10 = 0x0000A500
-    movk x10, #0x00FF, lsl #16
-    // → w10 = 0x00FFA500 (naranja)
-    bl   pintar_rectangulo
-    // ─── 3) Puerta marrón (10×15) ───
-    //   X = X_base + 10, Y = Y_base + 25
-    add  x1, x1, #10   // x1 = X_base + 10 
-    add  x2, x2, #25   // x2 = Y_base + 25
-    mov  x3, #10       // ancho  = 10
-    mov  x4, #15       // alto   = 15
-    movz x10, #0x4513  // w10 = 0x00004513
-    movk x10, #0x008B, lsl #16
-    // → w10 = 0x008B4513 (marrón)
-    bl   pintar_rectangulo
-    // ─── 4) Ventana izquierda (6×6, celeste) ───
-    //   X = X_base + 5, Y = Y_base + 10
-    mov  x1, x22 //restauro el xbase
-    add  x1, x1, #5    // x1 = x_base + 5
-    mov  x2, x23
-    add  x2, x2, #10   // x2 = Y_base + 10
-    mov  x3, #6        // ancho  = 6
-    mov  x4, #6        // alto   = 6
-    movz x10, #0xD8E6  // w10 = 0x0000D8E6
-    movk x10, #0x00AD, lsl #16
-    // → w10 = 0x00ADD8E6 (celeste)
-    bl   pintar_rectangulo
-
-    // ─── 5) Ventana derecha (6×6, celeste) ───
-    //   X = X_base + 19, Y = Y_base + 10
-    mov  x1, x22
-    add  x1, x1, #19   // x1 = X_base + 19
-    mov  x2, x23
-    add  x2, x2, #10   // x2 = Y_base + 10
-    mov  x3, #6        // ancho  = 6
-    mov  x4, #6        // alto   = 6
-    movz x10, #0xD8E6
-    movk x10, #0x00AD, lsl #16
-    bl   pintar_rectangulo
-
-    // ─── 6) Hoja izquierda verde (8×8) ───
-    //   X = X_base + 6, Y = Y_base – 8
-    mov  x1, x22
-    add  x1, x1, #6    // x1 = X_base + 6
-    mov  x2, x23
-    sub  x2, x2, #8    // x2 = Y_base - 8
-    mov  x3, #8        // ancho  = 8
-    mov  x4, #8        // alto   = 8
-    movz x10, #0xFF00  // w10 = 0x0000FF00
-    movk x10, #0x0000, lsl #16
-    // → w10 = 0x0000FF00 (verde puro)
-    bl   pintar_rectangulo
-
-    // ─── 7) Hoja central verde (8×8) ───
-    //   X = X_base + 11, Y = Y_base – 12
-    mov  x1, x22
-    add  x1, x1, #11   // x1 = X_base + 11
-    mov  x2, x23
-    sub  x2, x2, #12   // x2 = Y_base - 12
-    mov  x3, #8
-    mov  x4, #8
-    movz x10, #0xFF00
-    movk x10, #0x0000, lsl #16
-    bl   pintar_rectangulo
-
-    // ─── 8) Hoja derecha verde (8×8) ───
-    //   X = X_base + 16, Y = Y_base – 8
-    mov  x1, x22
-    add  x1, x1, #16   // x1 = X_base + 16
-    mov  x2, x23
-    sub  x2, x2, #8    // x2 = Y_base - 8
-    mov  x3, #8
-    mov  x4, #8
-    movz x10, #0xFF00
-    movk x10, #0x0000, lsl #16
-    bl   pintar_rectangulo
-
-    // Restaurar stack y regresar
-    ldp  x29, x30, [sp], #16
-    ret
 
 dibujar_XXXXXX:
 
@@ -3115,28 +3014,28 @@ dibujar_cangrejo_cuerpo:
     sub x2,x2,#8
     mov x3,#8
     mov x4,#8
-    movz   x10, #0x0000
-    movk   x10, #0x0000, lsl #16
+    movz x10, #0x0000
+    movk x10, #0x0000, lsl #16
     bl pintar_rectangulo
     //puilas parte blanca
     add x1,x1,#4
     mov x3,#4
     mov x4,#4
-    movz   x10, #0xffff
-    movk   x10, #0xffff, lsl #16
+    movz x10, #0xffff
+    movk x10, #0xffff, lsl #16
     bl pintar_rectangulo
 
     add x1,x1,#12
     mov x3,#8
     mov x4,#8
-    movz   x10, #0x0000
-    movk   x10, #0x0000, lsl #16
+    movz x10, #0x0000
+    movk x10, #0x0000, lsl #16
     bl pintar_rectangulo
 
     mov x3,#4
     mov x4,#4
-    movz   x10, #0xffff
-    movk   x10, #0xffff, lsl #16
+    movz x10, #0xffff
+    movk x10, #0xffff, lsl #16
     bl pintar_rectangulo
 
     //para hacer las pinzas recupero x25 x26
@@ -3146,8 +3045,8 @@ dibujar_cangrejo_cuerpo:
     sub x2,x2,#0
     mov x3,#4
     mov x4,#4
-    movz   x10, #0x5500
-    movk   x10, #0x00FF, lsl #16
+    movz x10, #0x5500
+    movk x10, #0x00FF, lsl #16
     bl pintar_rectangulo
 
     sub x1,x1,#4
@@ -3447,46 +3346,46 @@ dibujar_pez:
     stp   x29, x30, [sp, #-16]!    // guardar FP/LR
     mov   x29, sp
 
-    // Parte 1: Cuerpo principal (rectángulo 40×20) centrado en (x1, x2)
-    // Lo dibujamos desplazado (-20, -10) para centrar
-    sub   x1, x1, #20       // x1 = x1 - 20
-    sub   x2, x2, #10       // x2 = x2 - 10
-    mov   x0, x20           // framebuffer (deberías cargarlo antes en x20 y pasarlo en x0)
-    mov   x3, #40           // ancho = 40
-    mov   x4, #20           // alto  = 20
-    mov   x10, x25          // color cuerpo (ya cargado en w20)
-    bl    pintar_rectangulo
+    //Cuerpo principal 
+    // Lo dibujamos desplaz(-20, -10) para centrar
+    sub x1, x1, #20
+    sub x2, x2, #10
+    mov x0, x20
+    mov x3, #40
+    mov x4, #20
+    mov x10, x25          // col cuer ya cargado en w20
+    bl pintar_rectangulo
 
-    // Parte 2: Aleta superior (8×8), un poco arriba a la izquierda
-    add   x1, x1, #4        // x1 = (x1_prev + 4)
-    mov   x2, x2, lsl #0    // x2 queda con la misma fila de arriba
-    sub   x2, x2, #8        // y2 = y2 - 8
-    mov   x3, #8
-    mov   x4, #8
-    mov   x10, x21          // color aletas
-    bl    pintar_rectangulo
+    // Aletsupe , un poc arr a la izq
+    add x1, x1, #4        
+    mov x2, x2, lsl #0 
+    sub x2, x2, #8
+    mov x3, #8
+    mov x4, #8
+    mov x10, x21
+    bl pintar_rectangulo
 
-    // Parte 3: Aleta inferior (8×8), un poco abajo a la izquierda
-    add   x1, x1, #0        // x1 no cambia
-    add   x2, x2, #28       // y2 = (y2_prev + 28), para quedar 8px debajo del cuerpo
-    mov   x3, #8
-    mov   x4, #8
-    mov   x10, x21          // color aletas
-    bl    pintar_rectangulo
+    // Aleta inferior un poc abaj a la izq
+    add x1, x1, #
+    add x2, x2, #28
+    mov x3, #8
+    mov x4, #8
+    mov x10, x21
+    bl pintar_rectangulo
 
     // Restauramos x1, x2 para la cabeza
-    sub   x1, x1, #4        // regresamos x1 a posición de cuerpo + 0
-    sub   x2, x2, #20       // regresamos x2 al centro original
+    sub x1, x1, #4
+    sub x2, x2, #20
 
-    // Parte 4: Cabeza (rectángulo 12×12) a la derecha del cuerpo
-    add   x1, x1, #40       // x1 = posición original + 20 
-    mov   x2, x2            // x2 = centro original
-    mov   x3, #12
-    mov   x4, #12
-    mov   x10, x22          // color ojo
-    bl    pintar_rectangulo
+    //Cabeza a la der del cuerpo
+    add x1, x1, #40       // x1 = posición original + 20 
+    mov x2, x2            // x2 = centro original
+    mov x3, #12
+    mov x4, #12
+    mov x10, x22          // color ojo
+    bl  pintar_rectangulo
 
-    // Parte 5: Ojo (rectángulo 4×4) dentro de la cabeza, arriba a la izquierda
+    //Ojo (rectángulo 4×4) dentro de la cabeza, arriba a la izquierda
     sub x1, x1, #4        // x1 = (cabezaX + 2)
     sub x2, x2, #2        // y2 = (cabezaY - 2)
     mov x3, #4
@@ -3498,7 +3397,7 @@ dibujar_pez:
     add x1, x1, #8        // x1 = cabezaX + 4
     add x2, x2, #2        // y2 = cabezaY
 
-    // Parte 6: Cola dos rectángulos
+    //Cola dos rectángulos
     // Rectángulo superior de la cola (10×10)
     sub x1, x1, #52       // x1 = (cuerpoX - 32)
     mov x2, x2            // y2 = centro original
@@ -3507,7 +3406,7 @@ dibujar_pez:
     mov x10, x24          // color cola (carga en w24)
     bl pintar_rectangulo
 
-    // Rectángulo inferior de la cola (10×10), justo abajo del anterior
+    // Rectángulo inferior
     add x2, x2, #10       // y2 = (colaY + 10)
     mov x3, #10
     mov x4, #10

@@ -123,15 +123,12 @@ loop_principal:
     bl hacer_tiempo
     bl hacer_tiempo
     
+
+    // COMPARACION PARA REPETIR LA ANIMACION
+    cmp x28, #40
+    b.eq main
+
     b loop_principal
-
-    // Infinite Loop
-
-InfLoop:
-
-	b InfLoop
-    b       InfLoop
-
 
 
 //

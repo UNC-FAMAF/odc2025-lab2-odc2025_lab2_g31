@@ -39,11 +39,6 @@ fondo_loop_x:
 
     bl pintar_arena
 
-    bl serie_algas
-
-    mov x1, #420
-    mov x2, #400
-    bl dibujar_casa_pina
 
 
 
@@ -78,11 +73,11 @@ fondo_loop_x:
 
     //
 
-    mov x1, #0
-    mov x2, #400
-    bl detalles_arena
-    bl letras_odc
+    bl serie_algas
 
+    mov x1, #420
+    mov x2, #400
+    bl dibujar_casa_pina
 
     // GPIOs
 
@@ -882,160 +877,6 @@ dibujar_casa_pina:
     // Restaurar stack y regresar
     ldp  x29, x30, [sp], #16
     ret
-
-// 
-    //Dibujar algas //
-    dibujar_algas:
-
-        //158233 = verde
-        movk x10, #0x0015 , lsl #16
-        movk x10, #0x8233
-
-        
-        mov x3, #10
-        mov x4, #10
-        bl pintar_rectangulo 
-
-        
-        mov x4, #60  
-        add x1, x1, #10
-        sub x2, x2, #50
-        bl pintar_rectangulo
-
-        add x1, x1, #10
-        mov x4, #40
-        add x2, x2 ,#20
-        bl pintar_rectangulo
-
-
-        add x1, x1, #10
-        add x2, x2, #10
-        mov x4, #20
-        bl pintar_rectangulo
-
-        add x1, x1, #10
-        sub x2, x2, #20
-        mov x4, #30
-        bl pintar_rectangulo
-
-        sub x1, x1, #10
-        sub x2, x2, #40
-        mov x4, #40
-        bl pintar_rectangulo
-
-        add x1, x1, #10
-        sub x2, x2, #20
-        bl pintar_rectangulo
-
-
-        add x1, x1, #10
-        add x2, x2, #10
-        mov x4, #10
-        bl pintar_rectangulo
-
-
-        mov x4, #30
-        sub x2, x2, #30
-        bl pintar_rectangulo
-
-        movk x10, #0x0015 , lsl #16
-        movk x10, #0x8233
-
-        sub x1, x1, #50
-        add x2, x2, #30
-        mov x4, #60
-        bl pintar_rectangulo
-
-
-        sub x1, x1, #10
-        mov x4, #40
-        add x2, x2, #10
-        bl pintar_rectangulo
-
-
-        add x1, x1, #20
-        mov x4,#70
-        sub x2, x2, #60
-        bl pintar_rectangulo
-
-
-        add x1, x1, #10
-        add x2, x2, #10
-        mov x4, #40
-        bl pintar_rectangulo
-
-
-
-        sub x1, x1, #20
-        sub x2, x2, #30
-        mov x4, #30
-        bl pintar_rectangulo
-
-    // Restaurar stack y regresar
-    ldp  x29, x30, [sp], #16
-    ret
-
-//
-
-//HACER BURBUJAS
-
-dibujar_burbujas:
-    // Entradas: x1 = x_center, x2 = y_center, x3 = radio
-    // Usa un color celeste claro para la burbuja
-
-    mov x0, x20                 // framebuffer base
-
-
-    // Color celeste (6aa0ab)
-    movz x10, #0x006a , lsl #16
-    movk x10, #0xa0ab
-
-    bl pintar_circulo
-
-    sub x3, x3, #2
-
-    //2fa4b9
-    movz x10, #0x002f , lsl #16
-    movk x10, #0xa4b9
-
-    bl pintar_circulo    
-
-    mov x11, x1      // x11 = centro x
-    mov x12, x2      // x12 = centro y 
-
-
-    lsr x4, x3, #1         // x4 = radius / 2
-
-    sub x1, x1, x4         // x_bright = x_center + radius / 2
-    sub x2, x2, x4         // y_bright = y_center - radius / 2
-
-    movz x10, #0x00ff , lsl #16
-    movk x10, #0xffff
-
-    mov x4, #4
-    mov x3, #4
-
-    bl pintar_rectangulo
-
-    add x1, x1, #4
-    sub x2, x2, #4
-
-    bl pintar_rectangulo
-    
-    
-    ldp x29, x30, [sp], #16
-    
-    
-    ret
-
-//
-
-
-
-
-
-
-
 
 dibujar_XXXXXX:
 
@@ -3353,7 +3194,7 @@ pintar_arena:
 
     ret
 
-    // ------------------------------------------------------------
+// ------------------------------------------------------------
 // Función: dibujar_algas
 //   Dibuja un conjunto de rectángulos simulando una alga marina.
 // Entradas:

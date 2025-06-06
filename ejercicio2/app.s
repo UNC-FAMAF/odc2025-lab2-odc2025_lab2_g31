@@ -916,16 +916,6 @@ hacer_tiempo:
     b.ne 1b
     ret
 
-// ---------------------------------------------------------
-// Función: dibujar_bob
-// Entrada:
-//   x1  = X_base (esquina superior izquierda de Bob pequeño)
-//   x2  = Y_base
-//
-// Dibuja un Bob Esponja de unos 20×30 píxeles, usando solo
-// un par de rectángulos para cuerpo y ojos, y un pequeño
-// rectángulo para la boca.
-// ---------------------------------------------------------
 
 // ---------------------------------------------------------
 // Función: dibujar_casa_pina

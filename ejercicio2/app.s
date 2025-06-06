@@ -20,8 +20,6 @@ mov x0, x20     // framebuffer en 0
 mov x28, #0     // SETEO EL CONTADOR EN 0
 mov x18, #230   // POS X para el tiburon
 mov x19, #180   // POS Y para el tiburon
-mov x26,
-mov x27,
 
 ///////////////////////////////////////
 //LOOP DONDE OCURRE TODA LA ANIMACION//
@@ -1041,12 +1039,16 @@ pintar_arena:
     movz x16, 0x00D1, lsl 16    // x10 = 0x00D10000
     movk x16, 0xC986, lsl 0     // x10 = 0x00D1C986  (color = 0xD1C986)
 
+    mov x11, x1
+    mov x12, x2
     mov x1, #0
     mov x2, #400
     mov x4, #80
     mov x3, SCREEN_WIDTH           // 80 filas de arena
     mov x10, x16
     bl pintar_rectangulo
+    mov x1, x11
+    mov x2, x12
 
     ldp  x29, x30, [sp], #16
 

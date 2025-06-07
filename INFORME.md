@@ -21,6 +21,8 @@ Después se dibuja el suelo marino, con arena, letras, burbujas y algas. Esa es 
 Encima de eso, se dibujan peces de distintos colores. Están repartidos por la pantalla y se van moviendo un poquito en cada vuelta, como si nadaran. Esa es la tercera capa.
 Y por último, se dibuja un tiburón que también se mueve. A veces cambia un poco su forma para que parezca que está nadando. Esa es la cuarta capa, que va por encima de todo.
 Todo esto se repite muchas veces para que parezca que todo se está moviendo y animando. Así se crea una escena del fondo del mar, como si fuera una película dibujada.
+Durante el desarrollo del programa, intentamos agregar una función para pintar un círculo en la pantalla. Pero esa función causó un problema en la animación: desde que no aparecieran lo llamado,principalmente.
+Por eso tuvimos que revisar y corregir esa parte para que la animación funcione sin problemas. A veces, al agregar algo que conllevaba la llamada a la función pintar_circulo, produjo afectar cómo se dibujan las otras cosas.
 
 Justificación instrucciones ARMv8:
 Neg: sirve para negar un valor.Nos sirvio para:

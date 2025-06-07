@@ -17,13 +17,22 @@ main:
 
 
 mov x0, x20     // framebuffer en 0
+
+// CONTADOR
+
 mov x28, #0     // SETEO EL CONTADOR EN 0
+
 // X E Y PARA LA CAPA DEL TIBURON
+
 mov x18, #230   // POS X para el tiburon
 mov x19, #180   // POS Y para el tiburon
+
 // X PARA LA CAPA DEL SUELO
+
 mov x14, #640
+
 // X PARA LA CAPA DE LOS PECES (Y DEL TIBURON)
+
 mov x15, #320
 
 ///////////////////////////////////////
@@ -55,13 +64,27 @@ loop_principal:
     
     // PRIMERA CAPA - Suelo Marino
 
-    bl pintar_arena
+        bl pintar_arena
 
         mov x11, x1
         mov x12, x2
         mov x1, x14
         mov x2, #400
+
         bl detalles_arena
+        bl letras_odc
+        //add a x si hace falta
+        //add a y si hace falta
+        //agregar llamados a funciones
+        //si lo hiciste, hacer sub a x
+        //si lo hiciste, hacer sub a y
+
+
+
+        sub x1, x1, #40
+        bl serie_algas
+        add x1, x1, #40
+
         mov x1, x11
         mov x2, x12
         sub x14, x14, #16
@@ -73,6 +96,7 @@ loop_principal:
     
     mov x11, x1
     mov x12, x2
+
     mov x1, x15
     mov x2, #100
     bl dibujar_pez
@@ -88,6 +112,8 @@ loop_principal:
 
 
     // TERCERA CAPA - Tiburon
+
+    // LOS DIBUJOS DEL TIBURON CAMBIAN CADA 4 LOOPS PRINCIPALES
 
     and x11, x28, #0b100     // x11 = bits 2 de x28 (valores 0 o 4)
     cmp x11, #0
@@ -1031,109 +1057,6 @@ hacer_tiempo:
     ret
 
 
-// ---------------------------------------------------------
-// Función: dibujar_casa_pina
-// Entrada:
-//   x20 = framebuffer_base (no se modifica jamás)
-//   x1  = X_base (esquina superior izquierda de la casa de piña)
-//   x2  = Y_base
-//
-// Dibuja una casa de piña de ~30×40 px, con cuerpo naranja,
-// puerta marrón, ventanas celestes y hojas verdes. Cada rectángulo
-// recarga X_base/Y_base desde x5/x6 para evitar “desfase”.
-// ---------------------------------------------------------
-dibujar_casa_pina:
-    stp  x29, x30, [sp, #-16]!    // Guardar FP y LR
-    mov  x29, sp
-
-    // 1) Guardar X_base y Y_base en registros aparte para no perderlos
-    mov  x22, x1        // x5 = X_base
-    mov  x23, x2        // x6 = Y_base
-
-    // ─── 2) Cuerpo de la piña (30×40) ───
-    mov  x3, #30       // ancho  = 30
-    mov  x4, #40       // alto   = 40
-    movz x10, #0xA500  // w10 = 0x0000A500
-    movk x10, #0x00FF, lsl #16
-    // → w10 = 0x00FFA500 (naranja)
-    bl   pintar_rectangulo
-    // ─── 3) Puerta marrón (10×15) ───
-    //   X = X_base + 10, Y = Y_base + 25
-    add  x1, x1, #10   // x1 = X_base + 10 
-    add  x2, x2, #25   // x2 = Y_base + 25
-    mov  x3, #10       // ancho  = 10
-    mov  x4, #15       // alto   = 15
-    movz x10, #0x4513  // w10 = 0x00004513
-    movk x10, #0x008B, lsl #16
-    // → w10 = 0x008B4513 (marrón)
-    bl   pintar_rectangulo
-    // ─── 4) Ventana izquierda (6×6, celeste) ───
-    //   X = X_base + 5, Y = Y_base + 10
-    mov  x1, x22 //restauro el xbase
-    add  x1, x1, #5    // x1 = x_base + 5
-    mov  x2, x23
-    add  x2, x2, #10   // x2 = Y_base + 10
-    mov  x3, #6        // ancho  = 6
-    mov  x4, #6        // alto   = 6
-    movz x10, #0xD8E6  // w10 = 0x0000D8E6
-    movk x10, #0x00AD, lsl #16
-    // → w10 = 0x00ADD8E6 (celeste)
-    bl   pintar_rectangulo
-
-    // ─── 5) Ventana derecha (6×6, celeste) ───
-    //   X = X_base + 19, Y = Y_base + 10
-    mov  x1, x22
-    add  x1, x1, #19   // x1 = X_base + 19
-    mov  x2, x23
-    add  x2, x2, #10   // x2 = Y_base + 10
-    mov  x3, #6        // ancho  = 6
-    mov  x4, #6        // alto   = 6
-    movz x10, #0xD8E6
-    movk x10, #0x00AD, lsl #16
-    bl   pintar_rectangulo
-
-    // ─── 6) Hoja izquierda verde (8×8) ───
-    //   X = X_base + 6, Y = Y_base – 8
-    mov  x1, x22
-    add  x1, x1, #6    // x1 = X_base + 6
-    mov  x2, x23
-    sub  x2, x2, #8    // x2 = Y_base - 8
-    mov  x3, #8        // ancho  = 8
-    mov  x4, #8        // alto   = 8
-    movz x10, #0xFF00  // w10 = 0x0000FF00
-    movk x10, #0x0000, lsl #16
-    // → w10 = 0x0000FF00 (verde puro)
-    bl   pintar_rectangulo
-
-    // ─── 7) Hoja central verde (8×8) ───
-    //   X = X_base + 11, Y = Y_base – 12
-    mov  x1, x22
-    add  x1, x1, #11   // x1 = X_base + 11
-    mov  x2, x23
-    sub  x2, x2, #12   // x2 = Y_base - 12
-    mov  x3, #8
-    mov  x4, #8
-    movz x10, #0xFF00
-    movk x10, #0x0000, lsl #16
-    bl   pintar_rectangulo
-
-    // ─── 8) Hoja derecha verde (8×8) ───
-    //   X = X_base + 16, Y = Y_base – 8
-    mov  x1, x22
-    add  x1, x1, #16   // x1 = X_base + 16
-    mov  x2, x23
-    sub  x2, x2, #8    // x2 = Y_base - 8
-    mov  x3, #8
-    mov  x4, #8
-    movz x10, #0xFF00
-    movk x10, #0x0000, lsl #16
-    bl   pintar_rectangulo
-
-    // Restaurar stack y regresar
-    ldp  x29, x30, [sp], #16
-    
-    ret
-
 pintar_arena:
 
     stp  x29, x30, [sp, #-16]!  
@@ -1157,924 +1080,868 @@ pintar_arena:
     ret
 
 detalles_arena:
+    stp  x29, x30, [sp, #-16]!
 
-        stp  x29, x30, [sp, #-16]!  
-
-    // Inicialización de colores
     movz x21, #0x00B9, lsl #16    // Color arena 1
     movk x21, #0xAF77, lsl #0
 
     movz x22, #0x00D1, lsl #16    // Color arena 2
     movk x22, #0xB886, lsl #0
 
-    // Tamaño del rectángulo
-    mov x3, #12
-    mov x4, #12
+    mov x9, #0                    // contador de filas
 
-    mov x10, x21
-    bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
-
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21          
-    bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22          
-    bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
-
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
-
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+loop_detalles:
+    cmp x9, #4                    // cantidad de filas
+    b.ge fin_detalles
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+    bl dibujar_fila_detalles      // dibuja una fila de detalles
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+    sub x1, x1, #448              // volver a inicio horizontal (x1 original - 448)
+    add x2, x2, #20               // avanzar a siguiente fila
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+    add x9, x9, #1
+    b loop_detalles
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+fin_detalles:
+    ldp x29, x30, [sp], #16
+    ret
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+dibujar_fila_detalles:
+    stp  x29, x30, [sp, #-16]!
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+    mov x11, #0                   // contador horizontal
+    mov x12, x1                   // guardar X inicial
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+loop_pares_rectangulos:
+    cmp x11, #24                  // 24 pares
+    b.ge fin_fila_detalles
 
-    sub x1, x1, #3
-    sub x2, x2, #30
+    mov x3, #12                   // ancho
+    mov x4, #12                   // alto
+    mov x10, x21                  // color 1
     bl pintar_rectangulo
 
     add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    mov x10, x22                  // color 2
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+    add x1, x1, #28               // avanzar horizontalmente
+    add x11, x11, #1
+    b loop_pares_rectangulos
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+fin_fila_detalles:
+    mov x1, x12                   // restaurar x1 original
+    ldp x29, x30, [sp], #16
+    ret
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+//FUNCION CANGREJO X1=XBASE X2=YBASE color ya definido
+dibujar_cangrejo_cuerpo:
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
+//POS xbase=x1 ybase=x2
+    add x1, x1, #0
+    mov x4, #4
+    mov x3,#8
+    // Cuerpo: naranja
+    movz   x10, #0x5500
+    movk   x10, #0x00FF, lsl #16
     bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
+    sub x1,x1,#8
+    add x2,x2,#4
+    mov x3,#24
+    mov x4,#4
     bl pintar_rectangulo
+    //
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+    sub x1,x1,#4
+    add x2,x2,#4
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    mov x3,#32
+    mov x4,#4
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    sub x1,x1,#4
+    add x2,x2,#4
+    mov x3,#40
+    mov x4,#4
     bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
+    sub x1,x1,#4
+    add x2,x2,#4
+    mov x3,#48
+    mov x4,#4
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    //2da mitad de la parte del cagrejo + detalle
+    add x2,x2,#4
+    mov x3,#48
+    mov x4,#4
+    movz   x10, #0xC2A7
+    movk   x10, #0x00FF, lsl #16
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    mov x22,x1
+    add x1,x1,#8
+    //gurado esta pos ya q m intersa para los ojos q voy a poner luego y las pinzas
+    mov x25,x1
+    mov x26,x2
+    mov x3,#32
+    movz   x10, #0x5500
+    movk   x10, #0x00FF, lsl #16
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    //recuperamos x1 y el color
+    movz   x10, #0xC2A7
+    movk   x10, #0x00FF, lsl #16
+    mov x1,x22
+    add x1,x1,#4
+    add x2,x2,#4
+    mov x3,#40
+    mov x4,#4
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    add x1,x1,#4
+    add x2,x2,#4
+    mov x3,#32
+    mov x4,#4
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    add x1,x1,#4
+    add x2,x2,#4
+    mov x3,#24
+    mov x4,#4
     bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+    //guardar el puntero x1 x2 importantes para dsp
+    //vamos a dibular una de sus patas
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    add x2,x2,#4
+    mov x22,x1
+    mov x23,x2
+    mov x3,#8
+    mov x4,#5
+    movz   x10, #0x5500
+    movk   x10, #0x00FF, lsl #16
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    add x2,x2,#4
+    sub x1,x1,#8
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    add x2,x2,#3
+    sub x1,x1,#4
     bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
+    //ahora la otra recuperamos x1 x2 inicial
+    mov x1,x22
+    mov x2,x23
+    add x1,x1,#20
+        mov x3,#8
+    mov x4,#5
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    add x2,x2,#4
+    add x1,x1,#8
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    add x2,x2,#3
+    add x1,x1,#4
     bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    //nuevamente recuperamos x1 x2
+    mov x1,x22
+    mov x2,x23
+    //pos el puntero para dibuar las otras patas mas arriba
+    sub x1,x1,#8
+    sub x2,x2,#8
+    //guardamos este putnero ahora importante
+    mov x22,x1
+    mov x23,x2
+    sub x1,x1,#4
+    mov x3,#4
+    mov x4,#4
     bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
+    sub x1,x1,#4
+    add x2,x2,#4
     bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    //recuperamos el puntero
+    mov x1,x22
+    mov x2,x23
+    add x1,x1,#40
     bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    add x1,x1,#4
+    add x2,x2,#4
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    //ojos recupero el puntero q m interesaba parte negra
+    mov x1,x25
+    mov x2,x26
+    add x1,x1,#4
+    sub x2,x2,#8
+    mov x3,#8
+    mov x4,#8
+    movz   x10, #0x0000
+    movk   x10, #0x0000, lsl #16
     bl pintar_rectangulo
-
-    sub x1, x1, #3
-    sub x2, x2, #30
+    //puilas parte blanca
+    add x1,x1,#4
+    mov x3,#4
+    mov x4,#4
+    movz   x10, #0xffff
+    movk   x10, #0xffff, lsl #16
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    add x1,x1,#12
+    mov x3,#8
+    mov x4,#8
+    movz   x10, #0x0000
+    movk   x10, #0x0000, lsl #16
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    mov x3,#4
+    mov x4,#4
+    movz   x10, #0xffff
+    movk   x10, #0xffff, lsl #16
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    //para hacer las pinzas recupero x25 x26
+    mov x1,x25
+    mov x2,x26
+    sub x1,x1,#14
+    sub x2,x2,#0
+    mov x3,#4
+    mov x4,#4
+    movz   x10, #0x5500
+    movk   x10, #0x00FF, lsl #16
     bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
+    sub x1,x1,#4
+    sub x2,x2,#4
+    mov x3,#4
+    mov x4,#4
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    sub x1,x1,#6
+    sub x2,x2,#5
+    mov x3,#15
+    mov x4,#4
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    sub x2,x2,#15
+    mov x3,#8
+    mov x4,#15
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    add x1,x1,#12
+    mov x4,#18
+    mov x3,#4
     bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
+    //dibujar las otras pinzas recupero x25 x26
+    mov x1,x25
+    mov x2,x26
+    add x1,x1,#42
+    mov x3,#4
+    mov x4,#4
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    add x1,x1,#4
+    sub x2,x2,#4
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    sub x1,x1,#4
+    sub x2,x2,#5
+    mov x3,#17
+    mov x4,#4
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    sub x2,x2,#15
+    mov x3,#8
+    mov x4,#15
     bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
+    add x1,x1,#12
+    mov x3,#6
+    mov x4,#18
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+    ldp x29, x30, [sp], #16     // Restaura x30
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+    ret
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+//FUNCION DUBIJAR CUERPO + TENTACULO CALAMAR -----------------------
+//dibuja el cuerpo del calamar mas abajo esta la fucnion que dibuja
+//los tentaculos son fucniones distintas pero se llaman ambas para dibujar el
+//calamar completo, se modulariza asi para hacer mas facil la animacion
+//x1=xbase del calamar
+//x2=ybase del calamr 
+//x26=color del calamar
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+dibujar_cuerpo_calamar:
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
+//POS xbase=x1 ybase=x2
+    add x1, x1, #0
+    mov x4, #4
+    mov x3,#8
+    mov x10, x26
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
     bl pintar_rectangulo
+    //modificamos el puntero mismo alto
+    sub x1, x1, #4
+    add x2, x2, #4
+    mov x3,#16
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
     bl pintar_rectangulo
+//desde donde estamos no movemos el puntero de vuelta las mismas medidas
+    sub x1, x1, #4
+    add x2, x2, #4
+    mov x3,#24
 
-    sub x1, x1, #3
-    sub x2, x2, #30
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+//desde donde estamos no movemos el puntero de vuelta las mismas medidas
+//modificamos el alto
+    sub x1, x1, #4
+    add x2, x2, #4
+    mov x3,#32
+    mov x4,#8
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+//desde donde estamos no movemos el puntero de vuelta las mismas medidas
+//tener en cuenta q a mod distinto la altura anterior
+//modificamos el alto
+    sub x1, x1, #4
+    add x2, x2, #8
+    mov x3,#40
+    mov x4,#10
 
-    sub x1, x1, #3
-    sub x2, x2, #30
     bl pintar_rectangulo
+//mod el puntero le damos forma
+    add x1,x1,#8
+    add x2,x2,#10
+    mov x3,#24
+    mov x4,#10
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+    sub x1,x1,#4
+    add x2,x2,#10
+    mov x3,#32
+    mov x4,#45
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
     bl pintar_rectangulo
+//dibujarle la cintura al calamar + ojo
+    mov x22,x1
+    mov x23,x2
+    add x1,x1,#16
+    add x2,x2,#20
+    movz x10, #0xffff, lsl #16
+    movk x10, #0xffff            // BLANCO
+    mov x3,#6
+    bl pintar_circulo
+    movz x10, #0x0000, lsl #16
+    movk x10, #0x0000            // negro pupila 
+    mov x3,#3
+    bl pintar_circulo
+    //recuperamos los xi correspondinetes
+    mov x1,x22
+    mov x2,x23
+    mov x10,x26
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+    add x1,x1,#5
+    add x2,x2,#45
+    mov x3,#22
+    mov x4,#4
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
     bl pintar_rectangulo
+    add x1,x1,#2
+    add x2,x2,#4
+    mov x3,#18
+    mov x4,#4
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
     bl pintar_rectangulo
+    sub x1,x1,#4
+    add x2,x2,#4
+    mov x3,#26
+    mov x4,#4
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
     bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+    sub x1,x1,#4
+    add x2,x2,#4
+    mov x3,#36
+    mov x4,#4
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
     bl pintar_rectangulo
 
+    ldp x29, x30, [sp], #16     // Restaura x30
 
-    sub x1, x1, #630  // volvemos a inicializar los detalles pero mas abajo
-    add x2, x2, #15
-    mov x10, x22
-    bl pintar_rectangulo
+    ret
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+dibujar_tentaculos_calamar:
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
+//tentaculos
+    add x2,x2,#4
+    mov x3,#4
+    mov x4,#75
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+//otro tentaculo mas un pco mas adelante
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    add x1,x1,#8
     bl pintar_rectangulo
+//otro tentaculo mas un pco mas adelante
 
-    add x1, x1, #4
-    sub x2, x2, #20
-    mov x10, x21
+    add x1,x1,#8
     bl pintar_rectangulo
+//otro tentaculo mas un pco mas adelante
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    add x1,x1,#8
     bl pintar_rectangulo
+//otro tentaculo mas un pco mas adelante
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    add x1,x1,#8
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+ldp x29, x30, [sp], #16     // Restaura x30
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+    ret
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+dibujar_tentaculos_calamar_MOVIENDOSE:
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+    stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
+//tentaculos
+//creamos var aux para no perder este 'puntero importante'
+    add x2,x2,#4
 
-    sub x1, x1, #3
-    sub x2, x2, #30
+    mov x22,x1
+    mov x23,x2
+    mov x3,#4
+    mov x4,#30
     bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+//EFECTO DE ARRAQUE
+    add x2,x2,#30
+    sub x1,x1,#6
+    mov x3,#10
+    mov x4,#4
     bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    mov x3,#4
+    mov x4,#32
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+//otro tentaculo mas un pco mas adelante
+//del puntero guardado
+    mov x1,x22
+    mov x2,x23
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+    add x1,x1,#8
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    mov x22,x1 //puntero importante
+    mov x3,#4
+    mov x4,#40
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+//EFECTO DE ARRAQUE
+    add x2,x2,#40
+    sub x1,x1,#6
+    mov x3,#10
+    mov x4,#4
     bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    mov x3,#4
+    mov x4,#22
     bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+//otro tentaculo mas un pco mas adelante efecto visual este queda como esta en reposo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    mov x1,x22
+    mov x2,x23
+    mov x4,#75
+    add x1,x1,#8
     bl pintar_rectangulo
+//otro tentaculo mas un pco mas adelante
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    add x1,x1,#8
+    mov x22,x1
+    mov x23,x2
+    mov x3,#4
+    mov x4,#40
     bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+//EFECTO DE ARRAQUE
+    add x2,x2,#40
+//    sub x1,x1,#6
+    mov x3,#10
+    mov x4,#4
     bl pintar_rectangulo
-
-    sub x1, x1, #3
-    sub x2, x2, #30
+    add x1,x1,#6
+    mov x3,#4
+    mov x4,#22
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+//otro tentaculo mas un pco mas adelante
+    //recuperamos el puntero
+    mov x1,x22
+    mov x2,x23
+    add x1,x1,#8
+    mov x3,#4
+    mov x4,#30
     bl pintar_rectangulo
-
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+//EFECTO DE ARRAQUE
+    add x2,x2,#30
+    mov x3,#10
+    mov x4,#4
     bl pintar_rectangulo
-
-    sub x1, x1, #3
-    sub x2, x2, #30
+    add x1,x1,#6
+    mov x3,#4
+    mov x4,#32
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+ldp x29, x30, [sp], #16     // Restaura x30
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+    ret
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+dibujar_pez:
+    stp   x29, x30, [sp, #-16]!    // guardar FP/LR
+    mov   x29, sp
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+    // Parte 1: Cuerpo principal (rectángulo 40×20) centrado en (x1, x2)
+    // Lo dibujamos desplazado (-20, -10) para centrar
+    sub   x1, x1, #20       // x1 = x1 - 20
+    sub   x2, x2, #10       // x2 = x2 - 10
+    mov   x0, x20           // framebuffer (deberías cargarlo antes en x20 y pasarlo en x0)
+    mov   x3, #40           // ancho = 40
+    mov   x4, #20           // alto  = 20
+    mov   x10, x25          // color cuerpo (ya cargado en w20)
+    bl    pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+    // Parte 2: Aleta superior (8×8), un poco arriba a la izquierda
+    add   x1, x1, #4        // x1 = (x1_prev + 4)
+    mov   x2, x2, lsl #0    // x2 queda con la misma fila de arriba
+    sub   x2, x2, #8        // y2 = y2 - 8
+    mov   x3, #8
+    mov   x4, #8
+    mov   x10, x21          // color aletas
+    bl    pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+    // Parte 3: Aleta inferior (8×8), un poco abajo a la izquierda
+    add   x1, x1, #0        // x1 no cambia
+    add   x2, x2, #28       // y2 = (y2_prev + 28), para quedar 8px debajo del cuerpo
+    mov   x3, #8
+    mov   x4, #8
+    mov   x10, x21          // color aletas
+    bl    pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+    // Restauramos x1, x2 para la cabeza
+    sub   x1, x1, #4        // regresamos x1 a posición de cuerpo + 0
+    sub   x2, x2, #20       // regresamos x2 al centro original
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+    // Parte 4: Cabeza (rectángulo 12×12) a la derecha del cuerpo
+    add   x1, x1, #40       // x1 = posición original + 20 
+    mov   x2, x2            // x2 = centro original
+    mov   x3, #12
+    mov   x4, #12
+    mov   x10, x22          // color ojo
+    bl    pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    // Parte 5: Ojo (rectángulo 4×4) dentro de la cabeza, arriba a la izquierda
+    sub x1, x1, #4        // x1 = (cabezaX + 2)
+    sub x2, x2, #2        // y2 = (cabezaY - 2)
+    mov x3, #4
+    mov x4, #4
+    mov x10, x23          // ojo y pupila (carga en w23)
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+    // Restaurar x1, x2 a centro para la cola
+    add x1, x1, #8        // x1 = cabezaX + 4
+    add x2, x2, #2        // y2 = cabezaY
 
-    sub x1, x1, #3
-    sub x2, x2, #30
+    // Parte 6: Cola dos rectángulos
+    // Rectángulo superior de la cola (10×10)
+    sub x1, x1, #52       // x1 = (cuerpoX - 32)
+    mov x2, x2            // y2 = centro original
+    mov x3, #10
+    mov x4, #10
+    mov x10, x24          // color cola (carga en w24)
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    // Rectángulo inferior de la cola (10×10), justo abajo del anterior
+    add x2, x2, #10       // y2 = (colaY + 10)
+    mov x3, #10
+    mov x4, #10
+    mov x10, x24          // color cola
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+    ldp x29, x30, [sp], #16  // restaurar FP/LR
+    ret
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+// Función: dibujar_pez_2
+//
+//     x1 = xbase 
+//     x2 = ybase 
+//
+//   Colores:
+//     x21 = cuerpo  
+//     x22 = aleta    
+//     x23 = ojo
+//     x24 = cola
+dibujar_pez_2:
+    stp   x29, x30, [sp, #-16]!    // guardar FP/LR
+    mov   x29, sp
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    //CUERPO rectángulo 30×10 en (x1, x2)
+    mov x3, #30           // ancho = 30
+    mov x4, #10           // alto  = 10
+    mov x10, x21          // w10 = color_body
     bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
+    //Aleta
+    add x1, x1, #8        // x1' = original x1 + 8
+    sub x2, x2, #4        // x2' = original y2 - 4
+    mov x3, #6
+    mov x4, #4
+    mov x10, x22          // w10 = color_fin
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+    //Restaurar x2 a cuerpo: (y2 = original y2)
+    add x2, x2, #4        // x2 vuelve a valor de torso
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+    //Ojo (4×4) en (x1+20, x2+3)
+    add x1, x1, #12       // x1' = (original x1 + 8) + 12 = original x1 + 20
+    add x2, x2, #3        // y2' = original y2 + 3
+    mov x3, #4
+    mov x4, #4
+    mov x10, x23          // w10 = color_eye
+    bl    pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+    //Restaurar x1,x2 a cuerpo para la cola:
+    sub   x1, x1, #20       // x1 = original x1
+    sub   x2, x2, #3        // y2 = original y2
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+    //Cola (dos rectángulos 10×6 en (x1−10,x2+2) y (x1−10,x2+2+4))
+    sub   x1, x1, #10       // x1' = original x1 - 10
+    add   x2, x2, #2        // y2' = original y2 + 2
+    mov   x3, #10
+    mov   x4, #6
+    mov   x10, x24          // w10 = color_tail
+    bl    pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
+    // Parte inferior de cola
+    add x2, x2, #4        // y2 = (original y2+2) + 4 = original y2 + 6
+    mov x3, #10
+    mov x4, #6
+    mov x10, x24          // w10 = color_tail
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+    ldp   x29, x30, [sp], #16   // restaurar FP/LR
+    ret
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+    // ------------------------------------------------------------
+// Función: dibujar_algas
+//   Dibuja un conjunto de rectángulos simulando una alga marina.
+// Entradas:
+//   x0 = framebuffer_base
+//   x1 = X_centro
+//   x2 = Y_centro
+//   x10 = color (sobrescrito en esta función)
+// ------------------------------------------------------------
+dibujar_algas:
+       
+        stp x29, x30, [sp, #-16]!
+        mov x29, sp
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+        // Establecer color verde (0x00158233)
+        movk x10, #0x0015 , lsl #16
+        movk x10, #0x8233
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+        // Primer rectángulo pequeño en la base
+        mov x3, #10              // ancho
+        mov x4, #10              // alto
+        bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+        // Rectángulo largo vertical, desplazado arriba y a la derecha
+        mov x4, #60              
+        add x1, x1, #10          // mover a la derecha
+        sub x2, x2, #50          // subir
+        bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+        // Rectángulo más corto, movido arriba y a la derecha
+        add x1, x1, #10
+        mov x4, #40
+        add x2, x2 ,#20          // bajar un poco
+        bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+        // Rectángulo delgado, hacia la derecha
+        add x1, x1, #10
+        add x2, x2, #10
+        mov x4, #20
+        bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+        // Rectángulo mediano, arriba a la derecha
+        add x1, x1, #10
+        sub x2, x2, #20
+        mov x4, #30
+        bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+        // Rectángulo central, bajando
+        sub x1, x1, #10
+        sub x2, x2, #40
+        mov x4, #40
+        bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+        // Rectángulo superior derecho
+        add x1, x1, #10
+        sub x2, x2, #20
+        bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+        // Rectángulo pequeño, arriba a la derecha
+        add x1, x1, #10
+        add x2, x2, #10
+        mov x4, #10
+        bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+        // Rectángulo superior izquierdo
+        mov x4, #30
+        sub x2, x2, #30
+        bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+        // Rama izquierda inferior
+        sub x1, x1, #50
+        add x2, x2, #30
+        mov x4, #60
+        bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+        // Rama izquierda media
+        sub x1, x1, #10
+        mov x4, #40
+        add x2, x2, #10
+        bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+        // Rama derecha superior
+        add x1, x1, #20
+        mov x4,#70
+        sub x2, x2, #60
+        bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+        // Rama derecha media
+        add x1, x1, #10
+        add x2, x2, #10
+        mov x4, #40
+        bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+        // Rama central final
+        sub x1, x1, #20
+        sub x2, x2, #30
+        mov x4, #30
+        bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+    // Restaurar registros de frame y volver
+    ldp  x29, x30, [sp], #16
+    ret
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+// ------------------------------------------------------------
+// Función: dibujar_burbujas
+//   Dibuja una burbuja con efectos visuales de profundidad y brillo
+// Entradas:
+//   x0  = framebuffer_base (desde x20)
+//   x1  = X centro
+//   x2  = Y centro
+//   x3  = radio
+// ------------------------------------------------------------
+dibujar_burbujas:
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+    mov x0, x20                 // Cargar framebuffer base desde x20
+    stp x29, x30, [sp, #-16]!
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+    // Dibujar el círculo exterior con color celeste claro (0x6aa0ab)
+    movz x10, #0x006a , lsl #16
+    movk x10, #0xa0ab
+    bl pintar_circulo          // Llamar para dibujar la burbuja principal
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+    // Reducir radio para dibujar un círculo interior (efecto de profundidad)
+    sub x3, x3, #2            
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+    // Dibujar el círculo interior más oscuro (color 0x2fa4b9)
+    movz x10, #0x002f , lsl #16
+    movk x10, #0xa4b9
+    bl pintar_circulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+    // Guardar coordenadas originales del centro
+    mov x11, x1                // x11 = centro x
+    mov x12, x2                // x12 = centro y
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+    // Calcular desplazamiento para el reflejo brillante
+    lsr x4, x3, #1             // x4 = radio / 2
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+    // Posicionar punto brillante arriba a la izquierda
+    sub x1, x1, x4             // x_bright = centro_x - radio / 2
+    sub x2, x2, x4             // y_bright = centro_y - radio / 2
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+    // Establecer color blanco (0x00ffff, para el reflejo)
+    movz x10, #0x00ff , lsl #16
+    movk x10, #0xffff
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
+    // Dibujar un pequeño rectángulo blanco simulando reflejo
+    mov x4, #4                 // altura = 4
+    mov x3, #4                 // ancho = 4
     bl pintar_rectangulo
 
-    sub x1, x1, #3
-    sub x2, x2, #30
+    // Dibujar un segundo reflejo más abajo a la derecha
+    add x1, x1, #4             // desplazar a la derecha
+    sub x2, x2, #4             // desplazar arriba
     bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+    // Restaurar registros de frame y volver
+    ldp x29, x30, [sp], #16
+    ret
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
+serie_algas:
 
-    sub x1, x1, #3
-    sub x2, x2, #30
-    bl pintar_rectangulo
+    stp  x29, x30, [sp, #-16]!  
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+    mov x27, #5        // Contador del ciclo
+    mov x2, #400
+    bl dibujar_algas
+ciclo_mover_x1:
+    add x1, x1, #100       // Mover x1 40 píxeles a la derecha
+    mov x2, #400
+    bl dibujar_algas
+    subs x27, x27, #1       // Decrementar contador y actualizar flags
+    b.ne ciclo_mover_x1   // Si x5 != 0, repetir ciclo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
 
-    sub x1, x1, #630
-    sub x2, x2, #15
-    mov x10, x21
-    bl pintar_rectangulo
+    ldp  x29, x30, [sp], #16
+    ret
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x22
-    bl pintar_rectangulo
 
-    add x1, x1, #10
-    add x2, x2, #10
-    mov x10, x21
-    bl pintar_rectangulo
+letras_odc:
 
     movz x23, #0x00BC, lsl #16 // color arena para las letras "ODC 2025"
     movk x23, #0x9845, lsl #0
 
-    sub x2, x2, #30
+    stp  x29, x30, [sp, #-16]!  
+
+    // letras hechas con la arena
+    sub x2,x2,#30
     mov x3, #5  //tamaño de los granos de arena
     mov x4, #5
     mov x10, x23  // color de las letras
@@ -2788,147 +2655,8 @@ detalles_arena:
 
     /// finalizacion de las siglas "OdC 2025" --------------- //////
 
+    ldp  x29, x30, [sp], #16
 
-    ldp x29, x30, [sp], #16     // Restaura x30
-
-    ret
-    
-dibujar_pez:
-    stp   x29, x30, [sp, #-16]!    // guardar FP/LR
-    mov   x29, sp
-
-    // Parte 1: Cuerpo principal (rectángulo 40×20) centrado en (x1, x2)
-    // Lo dibujamos desplazado (-20, -10) para centrar
-    sub   x1, x1, #20       // x1 = x1 - 20
-    sub   x2, x2, #10       // x2 = x2 - 10
-    mov   x0, x20           // framebuffer (deberías cargarlo antes en x20 y pasarlo en x0)
-    mov   x3, #40           // ancho = 40
-    mov   x4, #20           // alto  = 20
-    mov   x10, x25          // color cuerpo (ya cargado en w20)
-    bl    pintar_rectangulo
-
-    // Parte 2: Aleta superior (8×8), un poco arriba a la izquierda
-    add   x1, x1, #4        // x1 = (x1_prev + 4)
-    mov   x2, x2, lsl #0    // x2 queda con la misma fila de arriba
-    sub   x2, x2, #8        // y2 = y2 - 8
-    mov   x3, #8
-    mov   x4, #8
-    mov   x10, x21          // color aletas
-    bl    pintar_rectangulo
-
-    // Parte 3: Aleta inferior (8×8), un poco abajo a la izquierda
-    add   x1, x1, #0        // x1 no cambia
-    add   x2, x2, #28       // y2 = (y2_prev + 28), para quedar 8px debajo del cuerpo
-    mov   x3, #8
-    mov   x4, #8
-    mov   x10, x21          // color aletas
-    bl    pintar_rectangulo
-
-    // Restauramos x1, x2 para la cabeza
-    sub   x1, x1, #4        // regresamos x1 a posición de cuerpo + 0
-    sub   x2, x2, #20       // regresamos x2 al centro original
-
-    // Parte 4: Cabeza (rectángulo 12×12) a la derecha del cuerpo
-    add   x1, x1, #40       // x1 = posición original + 20 
-    mov   x2, x2            // x2 = centro original
-    mov   x3, #12
-    mov   x4, #12
-    mov   x10, x22          // color ojo
-    bl    pintar_rectangulo
-
-    // Parte 5: Ojo (rectángulo 4×4) dentro de la cabeza, arriba a la izquierda
-    sub x1, x1, #4        // x1 = (cabezaX + 2)
-    sub x2, x2, #2        // y2 = (cabezaY - 2)
-    mov x3, #4
-    mov x4, #4
-    mov x10, x23          // ojo y pupila (carga en w23)
-    bl pintar_rectangulo
-
-    // Restaurar x1, x2 a centro para la cola
-    add x1, x1, #8        // x1 = cabezaX + 4
-    add x2, x2, #2        // y2 = cabezaY
-
-    // Parte 6: Cola dos rectángulos
-    // Rectángulo superior de la cola (10×10)
-    sub x1, x1, #52       // x1 = (cuerpoX - 32)
-    mov x2, x2            // y2 = centro original
-    mov x3, #10
-    mov x4, #10
-    mov x10, x24          // color cola (carga en w24)
-    bl pintar_rectangulo
-
-    // Rectángulo inferior de la cola (10×10), justo abajo del anterior
-    add x2, x2, #10       // y2 = (colaY + 10)
-    mov x3, #10
-    mov x4, #10
-    mov x10, x24          // color cola
-    bl pintar_rectangulo
-
-    ldp x29, x30, [sp], #16  // restaurar FP/LR
-    ret
-
-
-
-
-// Función: dibujar_pez_2
-//
-//     x1 = xbase 
-//     x2 = ybase 
-//
-//   Colores:
-//     x21 = cuerpo  
-//     x22 = aleta    
-//     x23 = ojo
-//     x24 = cola
-dibujar_pez_2:
-    stp   x29, x30, [sp, #-16]!    // guardar FP/LR
-    mov   x29, sp
-
-    //CUERPO rectángulo 30×10 en (x1, x2)
-    mov x3, #30           // ancho = 30
-    mov x4, #10           // alto  = 10
-    mov x10, x21          // w10 = color_body
-    bl pintar_rectangulo
-
-    //Aleta
-    add x1, x1, #8        // x1' = original x1 + 8
-    sub x2, x2, #4        // x2' = original y2 - 4
-    mov x3, #6
-    mov x4, #4
-    mov x10, x22          // w10 = color_fin
-    bl pintar_rectangulo
-
-    //Restaurar x2 a cuerpo: (y2 = original y2)
-    add x2, x2, #4        // x2 vuelve a valor de torso
-
-    //Ojo (4×4) en (x1+20, x2+3)
-    add x1, x1, #12       // x1' = (original x1 + 8) + 12 = original x1 + 20
-    add x2, x2, #3        // y2' = original y2 + 3
-    mov x3, #4
-    mov x4, #4
-    mov x10, x23          // w10 = color_eye
-    bl    pintar_rectangulo
-
-    //Restaurar x1,x2 a cuerpo para la cola:
-    sub   x1, x1, #20       // x1 = original x1
-    sub   x2, x2, #3        // y2 = original y2
-
-    //Cola (dos rectángulos 10×6 en (x1−10,x2+2) y (x1−10,x2+2+4))
-    sub   x1, x1, #10       // x1' = original x1 - 10
-    add   x2, x2, #2        // y2' = original y2 + 2
-    mov   x3, #10
-    mov   x4, #6
-    mov   x10, x24          // w10 = color_tail
-    bl    pintar_rectangulo
-
-    // Parte inferior de cola
-    add x2, x2, #4        // y2 = (original y2+2) + 4 = original y2 + 6
-    mov x3, #10
-    mov x4, #6
-    mov x10, x24          // w10 = color_tail
-    bl pintar_rectangulo
-
-    ldp   x29, x30, [sp], #16   // restaurar FP/LR
     ret
 
 

@@ -1,8 +1,8 @@
 Nombre y apellido 
-Integrante 1: Lautaro Santino Maldonado
-Integrante 2: Daniel Alejandro Rojas
-Integrante 3: Martina Brida 
-Integrante 4: Maximo Barrionuevo Mazurkievich
+Integrante 1: Lautaro Santino Maldonado,46845849
+Integrante 2: Daniel Alejandro Rojas,46890147
+Integrante 3: Martina Brida,-
+Integrante 4: Maximo Barrionuevo Mazurkievich,46889534
 
 
 Descripción ejercicio 1: 
@@ -17,4 +17,16 @@ Descripción ejercicio 2:
 
 
 Justificación instrucciones ARMv8:
+Neg: sirve para negar un valor.Nos sirvio para:
++Iniciar un bucle desde -radio (centro hacia arriba/izquierda).
++Facilitar el recorrido simétrico vertical (deltaY) desde el borde superior del círculo hasta el borde inferior.
++Evitar tener que calcular 0 - radio con sub x4, xzr, x3.
+cmp:Compara dos registros.Pero no guarda el resultado, solo pone banderas
+subs:Hace x1 = x2 - x3, y además pone las banderas para decidir si saltar después.
+b.eq=Salta si son iguales (eq = equal)
+b.ne=Salta si NO son iguales (ne = not equal)
+b.ge=Salta si es mayor o igual (ge = greater or equal)
+bl=Es un salto a una subrutina (“branch with link”), como llamar a una función.Guarda la dirección de regreso en el registro x30 (link register, LR).
+beq=Es lo mismo que b.eq — solo otra forma de escribirlo. Algunas herramientas usan una u otra.
 
+*Algunos son no tan conocidos por ello los pongo

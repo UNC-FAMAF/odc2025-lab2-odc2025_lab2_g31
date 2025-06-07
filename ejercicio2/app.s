@@ -64,6 +64,9 @@ loop_principal:
     
     // PRIMERA CAPA - Suelo Marino
 
+
+        
+
         bl pintar_arena
 
         mov x11, x1
@@ -80,6 +83,13 @@ loop_principal:
         //si lo hiciste, hacer sub a y
 
 
+        //BURBUJAS
+        add x1,x1,#330
+        add x2,x2,#100
+        mov x3,#6
+        bl dibujar_burbujas
+
+
 
         sub x1, x1, #40
         bl serie_algas
@@ -93,19 +103,104 @@ loop_principal:
     // SEGUNDA CAPA - Peces
 
 
-    
+    //NO TOCAR
     mov x11, x1
     mov x12, x2
 
     mov x1, x15
     mov x2, #100
+
+
+
+
+    movz    x25, 0x0090, lsl 16    //color del cuepo del pez
+    movk    x25, 0x0C3F, lsl 0     //
+
+
+    movz    x21, 0x00FF, lsl 16    // color aletas
+    movk    x21, 0x5733, lsl 0     // 
+
+    movz    x22, 0x00FF, lsl 16    //pico]
+    movk    x22, 0x3500, lsl 0     //
+
+
+    movz    x23, 0x0000, lsl 16    // OJO
+    movk    x23, 0x0000, lsl 0     //
+
+    movz    x24, 0x0058, lsl 16    // COLA
+    movk    x24, 0x1845, lsl 0     //  
+
     bl dibujar_pez
+
+    movz    x21, 0x00f9, lsl 16    // color cuerpo
+    movk    x21, 0x0590, lsl 0     // 
+
+    movz    x22, 0x00ff, lsl 16    //aleta
+    movk    x22, 0xfe1f, lsl 0     //
+
+
+    movz    x23, 0x0000, lsl 16    // pupilas ojo
+    movk    x23, 0x0000, lsl 0     // 
+
+    movz    x24, 0x00ff, lsl 16    // COLA
+    movk    x24, 0xca13, lsl 0     //  
+
+
+
     add x1, x1, #400
     add x2, x2, #100
     bl dibujar_pez_2
+    
+
+
+    movz    x21, 0x00e8, lsl 16    // color cuerpo
+    movk    x21, 0xf905, lsl 0     // 
+
+    movz    x22, 0x00ff, lsl 16    //aleta
+    movk    x22, 0xfe1f, lsl 0     //
+
+
+    movz    x23, 0x0000, lsl 16    // pupilas ojo
+    movk    x23, 0x0000, lsl 0     // 
+
+    movz    x24, 0x00ff, lsl 16    // COLA
+    movk    x24, 0xca13, lsl 0     //  
+
+    add x1,x1, #370
+    add x2,x2, #65
+
+    bl dibujar_pez_2
+
+    movz    x21, 0x00d1, lsl 16    // color cuerpo
+    movk    x21, 0x05f9, lsl 0     // 
+
+    movz    x22, 0x00ff, lsl 16    //aleta
+    movk    x22, 0xfe1f, lsl 0     //
+
+
+    movz    x23, 0x0000, lsl 16    // pupilas ojo
+    movk    x23, 0x0000, lsl 0     // 
+
+    movz    x24, 0x00ff, lsl 16    // COLA
+    movk    x24, 0xca13, lsl 0     //  
+
+    add x1, x1, #350
+    add x2, x2, #100
+    bl dibujar_pez_2
+
+    
+
+
+
+
+
+
     mov x1, x11
     mov x2, x12
     sub x15, x15, #8
+
+
+
     
     
 
@@ -1867,8 +1962,7 @@ dibujar_algas:
 //   x3  = radio
 // ------------------------------------------------------------
 dibujar_burbujas:
-
-    mov x0, x20                 // Cargar framebuffer base desde x20
+                 // se modifica aca en mov x0,x20
     stp x29, x30, [sp, #-16]!
 
     // Dibujar el círculo exterior con color celeste claro (0x6aa0ab)
@@ -1886,7 +1980,7 @@ dibujar_burbujas:
 
     // Guardar coordenadas originales del centro
     mov x11, x1                // x11 = centro x
-    mov x12, x2                // x12 = centro y
+    mov x9, x2                // x12 = centro y
 
     // Calcular desplazamiento para el reflejo brillante
     lsr x4, x3, #1             // x4 = radio / 2

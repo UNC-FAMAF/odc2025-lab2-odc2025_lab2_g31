@@ -3366,7 +3366,7 @@ dibujar_pez:
     bl pintar_rectangulo
 
     // Aleta inferior un poc abaj a la izq
-    add x1, x1, #
+    add x1, x1, #0
     add x2, x2, #28
     mov x3, #8
     mov x4, #8

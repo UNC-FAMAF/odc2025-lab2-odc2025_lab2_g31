@@ -1,4 +1,4 @@
-    .equ SCREEN_WIDTH,     640
+.equ SCREEN_WIDTH,     640
     .equ SCREEN_HEIGHT,    480
     .equ BITS_PER_PIXEL,   32
 
@@ -82,15 +82,46 @@ loop_principal:
         //si lo hiciste, hacer sub a x
         //si lo hiciste, hacer sub a y
 
-
-        //BURBUJAS
-        add x1,x1,#330
-        add x2,x2,#100
-        mov x3,#6
-        bl dibujar_burbujas
+    sub x2,x2, #40
+    add x1, x1, #60
+    bl dibujar_cangrejo_cuerpo
+    add x2, x2, #70
 
 
+    // COLORES PARA EL CALAMAR
 
+    movz x26, 0x00FC, lsl 16    // x10 = 0x00D10000
+    movk x26, 0x53A0, lsl 0     // x10 = 0x00D1C986
+
+    sub x2, x2, #500
+    and x11, x28, #0b100     // x11 = bits 2 de x28 (valores 0 o 4)
+    cmp x11, #0
+    beq l_calamar
+    
+    mov x11, x1
+    mov x12, x2
+    mov x1, x14
+    bl dibujar_cuerpo_calamar
+    bl dibujar_tentaculos_calamar_MOVIENDOSE
+    mov x1, x11
+    mov x2, x12
+    sub x2, x2, #10
+    b fin_calamar
+    
+    l_calamar:
+        mov x11, x1
+        mov x12, x2
+        mov x1, x14
+        bl dibujar_cuerpo_calamar
+        bl dibujar_tentaculos_calamar
+        mov x1, x11
+        mov x2, x12
+        sub x2, x2, #2
+
+    fin_calamar:
+
+        
+        
         sub x1, x1, #40
         bl serie_algas
         add x1, x1, #40
@@ -1336,7 +1367,7 @@ dibujar_cangrejo_cuerpo:
     mov x1,x22
     mov x2,x23
     add x1,x1,#20
-        mov x3,#8
+    mov x3,#8
     mov x4,#5
     bl pintar_rectangulo
 
@@ -1539,16 +1570,20 @@ dibujar_cuerpo_calamar:
 //dibujarle la cintura al calamar + ojo
     mov x22,x1
     mov x23,x2
-    add x1,x1,#16
-    add x2,x2,#20
+    add x1,x1,#8
+    add x2,x2,#12
     movz x10, #0xffff, lsl #16
     movk x10, #0xffff            // BLANCO
-    mov x3,#6
-    bl pintar_circulo
+    mov x3,#16
+    mov x4,#16
+    bl pintar_rectangulo
     movz x10, #0x0000, lsl #16
     movk x10, #0x0000            // negro pupila 
-    mov x3,#3
-    bl pintar_circulo
+    add x1, x1, #2
+    add x2,x2, #2
+    mov x4,#12
+    mov x3,#12
+    bl pintar_rectangulo
     //recuperamos los xi correspondinetes
     mov x1,x22
     mov x2,x23

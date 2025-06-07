@@ -1,4 +1,4 @@
-    .equ SCREEN_WIDTH,     640
+.equ SCREEN_WIDTH,     640
     .equ SCREEN_HEIGHT,    480
     .equ BITS_PER_PIXEL,   32
 
@@ -38,8 +38,8 @@ fondo_loop_x:
     mov x2, #400
 
     bl pintar_arena
-    bl letras_odc
     bl detalles_arena
+    bl letras_odc
     bl serie_algas
 
     // TIBURON ANIMADO
@@ -85,7 +85,7 @@ fondo_loop_x:
     movz    x21, 0x00FF, lsl 16    // color aletas
     movk    x21, 0x5733, lsl 0     // 
 
-    movz    x22, 0x00FF, lsl 16    //pico]
+    movz    x22, 0x00FF, lsl 16    //pico
     movk    x22, 0x3500, lsl 0     //
 
 
@@ -290,15 +290,6 @@ fondo_loop_x:
     mov x2,#100
     mov x3,#10
     bl dibujar_burbujas
-    
-
-    // AQUI LLAMAR A TU FUNCION QUE HACE TU dibujo 
-
-    bl dibujar_XXXXXX
-
-    //
-
-
 
     // GPIOs
 
@@ -459,7 +450,7 @@ fin_circulo:
     ret
 
 
-
+// Dibujo TIBURON
 
 dibujar_cuerpo:
 
@@ -1060,7 +1051,6 @@ dibujar_ojo1:
 
     ret
 
-
 dibujar_ojo2:
 
     stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
@@ -1087,232 +1077,6 @@ hacer_tiempo:
 1:
     subs x0, x0, #1
     b.ne 1b
-    ret
-
-// ---------------------------------------------------------
-// Función: dibujar_bob
-// Entrada:
-//   x1  = X_base (esquina superior izquierda de Bob pequeño)
-//   x2  = Y_base
-//
-// Dibuja un Bob Esponja de unos 20×30 píxeles, usando solo
-// un par de rectángulos para cuerpo y ojos, y un pequeño
-// rectángulo para la boca.
-// ---------------------------------------------------------
-
-dibujar_bob:
-    stp  x29, x30, [sp, #-16]!    // Guardar FP y LR
-    mov  x29, sp
-    mov x22,x1 //nos facilita no tener q recaclular la pos inicial
-    mov x23,x2 //tmb lo guardamos
-
-    // 1. Cuerpo amarillo (20×30)
-    mov  x3, #20        // ancho
-    mov  x4, #30        // alto
-    movz x10, #0xF700   // w10 = 0x0000FF00 (byte alto = 0x00FF)
-    movk x10, #0x00FF, lsl #16
-    // → w10 final = 0x00FFFF00 (amarillo)
-    bl   pintar_rectangulo
-
-    // 2. Ojos 
-    // Ojo izquierdo, desplazado 4px a derecha y 6px abajo dentro del cuerpo
-    add  x1, x1, #4     // x = X_base + 4
-    add  x2, x2, #6     // y = Y_base + 6
-    mov  x3, #4
-    mov  x4, #4
-    movz x10, #0xFFFF   // w10 = 0xFFFFFF
-    movk x10, #0x00FF, lsl #16
-    // → w10 final = 0x00FFFFFF (blanco)
-    bl   pintar_rectangulo
-
-    // Ojo der 10px a la derecha de X_base (4 + 6)
-    add  x1, x1, #8     // x = (X_base + 4) + 6 = X_base + 10 (tenemos en cuenta la usma anterior)
-    // y sigue siendo Y_base + 6 no se modifica esta donde nos interesa
-    mov  x3, #4
-    mov  x4, #4
-    movz x10, #0xFFFF
-    movk x10, #0x00FF, lsl #16
-    bl   pintar_rectangulo
-
-    // 3. Boca (6×2)
-    // Restaurar x1 a X_base + 7 (aprox centro menos 3px)
-    sub  x1, x1, #10    // x = (X_base + 10) - 10 = X_base
-    add  x1, x1, #7     // x = X_base + 7
-    // y = Y_base + 20 (parte inferior del cuerpo, 30 - 8)
-    sub  x2, x2, #6     // x2 = (Y_base + 6) - 6 = Y_base
-    add  x2, x2, #20    // x2 = Y_base + 20
-    mov  x3, #6
-    mov  x4, #2
-    movz x10, #0x0000   // w10 = 0x00000000 (negro)
-    movk x10, #0x0000, lsl #16
-    bl   pintar_rectangulo
-
-    //4 Pantalones azules (20x10)
-    //necesito posicionarme 30 pixeles abajo de la pos nicial
-    mov x1, x22
-    mov x2, x23
-    add x2, x2, #30
-    add x3, x3, #15
-    add x4, x4, #5
-    movz x10, #0x00FF   // w10 =(azul)
-    movk x10, #0x0000, lsl #16
-    bl   pintar_rectangulo
-
-
-    //5 piernas
-    //desde x2 solo bajamos 9 pixeles para hacer las piernas
-    add x2, x2, #9
-    add x1,x1,#3
-    mov x3,#3
-    mov x4,#10
-    movz x10, #0xF700   // w10 = 0x0000FF00 (byte alto = 0x00FF)
-    movk x10, #0x00FF, lsl #16
-    bl pintar_rectangulo
-
-
-    //la otra pierna solo sumamos x1
-    add x1, x1, #12
-    bl pintar_rectangulo
-    // Restaurar stack y salir
-    ldp  x29, x30, [sp], #16
-    ret
-
-
-// ---------------------------------------------------------
-// Función: dibujar_casa_pina
-// Entrada:
-//   x20 = framebuffer_base (no se modifica jamás)
-//   x1  = X_base (esquina superior izquierda de la casa de piña)
-//   x2  = Y_base
-//
-// Dibuja una casa de piña de ~30×40 px, con cuerpo naranja,
-// puerta marrón, ventanas celestes y hojas verdes. Cada rectángulo
-// recarga X_base/Y_base desde x5/x6 para evitar “desfase”.
-// ---------------------------------------------------------
-dibujar_casa_pina:
-    stp  x29, x30, [sp, #-16]!    // Guardar FP y LR
-    mov  x29, sp
-
-    // 1) Guardar X_base y Y_base en registros aparte para no perderlos
-    mov  x22, x1        // x5 = X_base
-    mov  x23, x2        // x6 = Y_base
-
-    // ─── 2) Cuerpo de la piña (30×40) ───
-    mov  x3, #30       // ancho  = 30
-    mov  x4, #40       // alto   = 40
-    movz x10, #0xA500  // w10 = 0x0000A500
-    movk x10, #0x00FF, lsl #16
-    // → w10 = 0x00FFA500 (naranja)
-    bl   pintar_rectangulo
-    // ─── 3) Puerta marrón (10×15) ───
-    //   X = X_base + 10, Y = Y_base + 25
-    add  x1, x1, #10   // x1 = X_base + 10 
-    add  x2, x2, #25   // x2 = Y_base + 25
-    mov  x3, #10       // ancho  = 10
-    mov  x4, #15       // alto   = 15
-    movz x10, #0x4513  // w10 = 0x00004513
-    movk x10, #0x008B, lsl #16
-    // → w10 = 0x008B4513 (marrón)
-    bl   pintar_rectangulo
-    // ─── 4) Ventana izquierda (6×6, celeste) ───
-    //   X = X_base + 5, Y = Y_base + 10
-    mov  x1, x22 //restauro el xbase
-    add  x1, x1, #5    // x1 = x_base + 5
-    mov  x2, x23
-    add  x2, x2, #10   // x2 = Y_base + 10
-    mov  x3, #6        // ancho  = 6
-    mov  x4, #6        // alto   = 6
-    movz x10, #0xD8E6  // w10 = 0x0000D8E6
-    movk x10, #0x00AD, lsl #16
-    // → w10 = 0x00ADD8E6 (celeste)
-    bl   pintar_rectangulo
-
-    // ─── 5) Ventana derecha (6×6, celeste) ───
-    //   X = X_base + 19, Y = Y_base + 10
-    mov  x1, x22
-    add  x1, x1, #19   // x1 = X_base + 19
-    mov  x2, x23
-    add  x2, x2, #10   // x2 = Y_base + 10
-    mov  x3, #6        // ancho  = 6
-    mov  x4, #6        // alto   = 6
-    movz x10, #0xD8E6
-    movk x10, #0x00AD, lsl #16
-    bl   pintar_rectangulo
-
-    // ─── 6) Hoja izquierda verde (8×8) ───
-    //   X = X_base + 6, Y = Y_base – 8
-    mov  x1, x22
-    add  x1, x1, #6    // x1 = X_base + 6
-    mov  x2, x23
-    sub  x2, x2, #8    // x2 = Y_base - 8
-    mov  x3, #8        // ancho  = 8
-    mov  x4, #8        // alto   = 8
-    movz x10, #0xFF00  // w10 = 0x0000FF00
-    movk x10, #0x0000, lsl #16
-    // → w10 = 0x0000FF00 (verde puro)
-    bl   pintar_rectangulo
-
-    // ─── 7) Hoja central verde (8×8) ───
-    //   X = X_base + 11, Y = Y_base – 12
-    mov  x1, x22
-    add  x1, x1, #11   // x1 = X_base + 11
-    mov  x2, x23
-    sub  x2, x2, #12   // x2 = Y_base - 12
-    mov  x3, #8
-    mov  x4, #8
-    movz x10, #0xFF00
-    movk x10, #0x0000, lsl #16
-    bl   pintar_rectangulo
-
-    // ─── 8) Hoja derecha verde (8×8) ───
-    //   X = X_base + 16, Y = Y_base – 8
-    mov  x1, x22
-    add  x1, x1, #16   // x1 = X_base + 16
-    mov  x2, x23
-    sub  x2, x2, #8    // x2 = Y_base - 8
-    mov  x3, #8
-    mov  x4, #8
-    movz x10, #0xFF00
-    movk x10, #0x0000, lsl #16
-    bl   pintar_rectangulo
-
-    // Restaurar stack y regresar
-    ldp  x29, x30, [sp], #16
-    ret
-
-dibujar_XXXXXX:
-
-    stp  x29, x30, [sp, #-16]!  
-
-    // DEFINI TUS COLORES
-
-    movz x16, #0xffff, lsl #16
-    movk x16, #0xffff            // BLANCO 
-    movz x17, #0x00d3, lsl #16
-    movk x17, #0xdbde            // GRIS +++CLARO
-    movz x21, #0x003b, lsl #16
-    movk x21, #0x414a            // GRIS 
-    movz x22, #0x002c, lsl #16
-    movk x22, #0x3136            // GRIS OSCURO
-    movz x23, #0x0056, lsl #16   
-    movk x23, #0x5f68            // GRIS CLARO
-    movz x24, #0x0033, lsl #16
-    movk x24, #0x3a42            // GRIS +OSCURO
-    movz x25, #0x0012, lsl #16   
-    movk x25, #0x1315            // GRIS ++OSCURO
-    movz x26, #0x009b, lsl #16   
-    movk x26, #0xa3a6            // GRIS +CLARO
-    movz x27, #0x00bf, lsl #16
-    movk x27, #0xc8ca            // GRIS ++CLARO
-
-
-    mov x1, #0            // luego borrar estas lineas una vez inicializado
-    mov x2, #0            // idem
-
-    //-------DEFINI TU FUNCION AQUI-------
-
-    ldp  x29, x30, [sp], #16
-
     ret
 
 letras_odc:
@@ -2042,12 +1806,22 @@ letras_odc:
     ret
 
 
-//FUNCION CANGREJO X1=XBASE X2=YBASE color ya definido
+// ------------------------------------------------------------
+// Función: dibujar_cangrejo_cuerpo
+//   Dibuja un cangrejo.
+// Entradas:
+//   x0 = framebuffer_base
+//   x1 = X_centro
+//   x2 = Y_centro
+//   x3 = radio
+//   x10 = color
+// ------------------------------------------------------------
+
 dibujar_cangrejo_cuerpo:
-
-
     stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
-//POS xbase=x1 ybase=x2
+// ------------------------------------------------------------
+// Pos x1,x2
+// ------------------------------------------------------------
     add x1, x1, #0
     mov x4, #4
     mov x3,#8
@@ -2061,7 +1835,6 @@ dibujar_cangrejo_cuerpo:
     mov x3,#24
     mov x4,#4
     bl pintar_rectangulo
-    //
 
     sub x1,x1,#4
     add x2,x2,#4
@@ -2099,8 +1872,6 @@ dibujar_cangrejo_cuerpo:
     movz   x10, #0x5500
     movk   x10, #0x00FF, lsl #16
     bl pintar_rectangulo
-
-
 
     //recuperamos x1 y el color
     movz   x10, #0xC2A7
@@ -2277,26 +2048,25 @@ dibujar_cangrejo_cuerpo:
     mov x4,#18
     bl pintar_rectangulo
 
-
-
     ldp x29, x30, [sp], #16     // Restaura x30
 
     ret
 
-//FUNCION DUBIJAR CUERPO + TENTACULO CALAMAR -----------------------
-//dibuja el cuerpo del calamar mas abajo esta la fucnion que dibuja
-//los tentaculos son fucniones distintas pero se llaman ambas para dibujar el
-//calamar completo, se modulariza asi para hacer mas facil la animacion
-//x1=xbase del calamar
-//x2=ybase del calamr 
-//x26=color del calamar
-
-
+// ------------------------------------------------------------
+// Función: dibujar_cuerpo_calamr
+//   Dibuja el cuerpo del calamar en la posición base (x1, x2).
+// Entradas:
+//   x1 = x-base del calamar
+//   x2 = y-base del calamar
+//   x26 = color del calamar
+// ------------------------------------------------------------
 
 dibujar_cuerpo_calamar:
 
     stp x29, x30, [sp, #-16]!  // Guarda x30 (LR) y x29 (FP)
-//POS xbase=x1 ybase=x2
+// ------------------------------------------------------------
+// Pos: x1,x2
+// ------------------------------------------------------------
     add x1, x1, #0
     mov x4, #4
     mov x3,#8
@@ -2520,6 +2290,19 @@ ldp x29, x30, [sp], #16     // Restaura x30
 
     ret
 
+
+// ------------------------------------------------------------
+// Función: dibujar_pez
+//   Dibuja un pez con cuerpo, dos aletas, cabeza, ojo y cola.
+// Entradas:
+//   x1  = xbase
+//   x2  = ybase
+//   x20 = framebuffer (debe estar previamente cargado)
+//   x21 = color del cuerpo
+//   x22 = color de las aletas
+//   x23 = color del ojo
+//   x24 = color de la cola
+// ------------------------------------------------------------
 dibujar_pez:
     stp   x29, x30, [sp, #-16]!    // guardar FP/LR
     mov   x29, sp
@@ -2595,18 +2378,17 @@ dibujar_pez:
     ret
 
 
-
-
+// ------------------------------------------------------------
 // Función: dibujar_pez_2
-//
-//     x1 = xbase 
-//     x2 = ybase 
-//
-//   Colores:
-//     x21 = cuerpo  
-//     x22 = aleta    
-//     x23 = ojo
-//     x24 = cola
+//   Dibuja un pez compuesto por cuerpo, aleta, ojo y cola.
+// Entradas:
+//   x1  = xbase
+//   x2  = ybase
+//   x21 = color del cuerpo
+//   x22 = color de la aleta
+//   x23 = color del ojo
+//   x24 = color de la cola
+// ------------------------------------------------------------
 dibujar_pez_2:
     stp   x29, x30, [sp, #-16]!    // guardar FP/LR
     mov   x29, sp
@@ -2841,7 +2623,13 @@ dibujar_burbujas:
     ldp x29, x30, [sp], #16
     ret
 
-
+// ------------------------------------------------------------
+// Función: serie_algas
+//   Dibuja una serie de 6 algas distribuidas horizontalmente.
+// Entradas esperadas:
+//   No recibe parámetros explícitos. Usa directamente x1, x2.
+//   Asume que dibujar_algas usa x1 como xbase y x2 como ybase.
+// ------------------------------------------------------------
 serie_algas:
 
     stp  x29, x30, [sp, #-16]!  
@@ -2862,127 +2650,70 @@ ciclo_mover_x1:
     ldp  x29, x30, [sp], #16
     ret
 
+// ------------------------------------------------------------
+// Función: detalles_arena
+//   Dibuja 4 filas de detalles decorativos en la arena, alternando
+//   dos colores en pares de rectángulos pequeños.
+// Entradas:
+//   x1 = posición horizontal inicial (modificada dentro)
+//   x2 = posición vertical inicial (modificada dentro)
+// ------------------------------------------------------------
 detalles_arena:
-    // 1) Prologue: guardar FP (x29) y LR (x30)
-    stp    x29, x30, [sp, #-16]!     
-    mov    x29, sp
+    stp  x29, x30, [sp, #-16]!
 
-    // ----------------------------------------------------
-    // 2) Cargar colores (callee-saved: x21 y x22)
-    // ----------------------------------------------------
-    // color1 = 0x00B9AF77
-    movz   x21, #0x00B9, lsl #16
-    movk   x21, #0xAF77, lsl #0
+    movz x21, #0x00B9, lsl #16    // Color arena 1
+    movk x21, #0xAF77, lsl #0
 
-    // color2 = 0x00D1B886
-    movz   x22, #0x00D1, lsl #16
-    movk   x22, #0xB886, lsl #0
+    movz x22, #0x00D1, lsl #16    // Color arena 2
+    movk x22, #0xB886, lsl #0
 
-    // ----------------------------------------------------
-    // 3) Calcular cuántas columnas caben en 640 px:
-    //    columnas_por_fila = 640 / 13 = 49
-    //    Lo guardamos en x28 y NO lo tocaremos más.
-    // ----------------------------------------------------
-    movz   x24, #0x0280, lsl #0    // x24 = 0x0280 = 640
-    mov    x25, #13                // x25 = 13  (ancho+separación horizontal)
-    udiv   x28, x24, x25           // x28 = 640 / 13 = 49 columnas
+    mov x9, #0                    // contador de filas
 
-    // ----------------------------------------------------
-    // 4) Índice de fila (fila = 0…9)  → lo guardamos en x19
-    // ----------------------------------------------------
-    mov    x19, #0                 // fila = 0
+loop_detalles:
+    cmp x9, #4                    // cantidad de filas
+    b.ge fin_detalles
 
-loop_filas:
-    // ----------------------------------------------------
-    // 5) Para cada fila:
-    //    - columna (x23) = 0
-    //    - X_actual (x25) = 0
-    //    - Calcular Y_actual = 400 + fila * 13  → en x26
-    // ----------------------------------------------------
-    mov    x23, #0                 // columna = 0
-    mov    x25, #0                 // X_actual = 0
+    bl dibujar_fila_detalles      // dibuja una fila de detalles
 
-    // 5.a) Base de Y = 400
-    mov    x26, #400
+    sub x1, x1, #448              // volver a inicio horizontal (x1 original - 448)
+    add x2, x2, #20               // avanzar a siguiente fila
 
-    // 5.b) Calcular fila × 13
-    //      usaremos x29 exclusivamente para este producto y NO 
-    //      tocaremos x28, que contiene el “49 columnas” fijo.
-    //
-    //      fila*13 = (fila<<3) + (fila<<2) + fila
-    //      x19 = fila
-    //      x29 = fila * 8
-    //      x27 = fila * 4
-    //      x29 = fila*8 + fila*4  = fila*12
-    //      x29 = fila*12 + fila   = fila*13
-    mov    x29, x19, lsl #3        // x29 = fila *  8
-    mov    x27, x19, lsl #2        // x27 = fila *  4
-    add    x29, x29, x27           // x29 = fila*12
-    add    x29, x29, x19           // x29 = fila*13
+    add x9, x9, #1
+    b loop_detalles
 
-    add    x26, x26, x29           // Y_actual = 400 + fila*13
-
-loop_columnas:
-    // ----------------------------------------------------
-    // 6) Alternar color según paridad de columna (x23 & 1)
-    //    guardamos en x10
-    // ----------------------------------------------------
-    and    x27, x23, #1
-    cmp    x27, #0
-    csel   x10, x21, x22, eq      // x10 = (columna par)? color1 : color2
-
-    // ----------------------------------------------------
-    // 7) Mover parámetros a los registros EXACTOS que
-    //      pintar_rectangulo espera:
-    //
-    //    x1 = X_actual
-    //    x2 = Y_actual
-    //    x3 = ancho  = 12
-    //    x4 = alto   = 12
-    //    x10 = color 
-    //
-    //    x20 (puntero al framebuffer) ya debe estar cargado 
-    //    antes de llamar a detalles_arena.
-    // ----------------------------------------------------
-    mov    x1, x25                // x1 = X_actual
-    mov    x2, x26                // x2 = Y_actual
-    mov    x3, #12                // x3 = ancho = 12
-    mov    x4, #12                // x4 = alto  = 12
-    // x10 ya contiene el color elegido (o x21 o x22)
-
-    bl     pintar_rectangulo      // dibuja el bloque 12×12 en (x1, x2)
-
-    // ----------------------------------------------------
-    // 8) Avanzar en X:
-    //    - X_actual += 13 (12 píxeles de ancho + 1 de separación)
-    //    - columna++ (x23++)
-    // ----------------------------------------------------
-    add    x25, x25, #13          // x25 = x25 + 13
-    add    x23, x23, #1           // columna++
-
-    // ----------------------------------------------------
-    // 9) Comparar columna (x23) con columnas_por_fila (x28 = 49)
-    //    si x23 < 49, repetir bucle_columnas
-    // ----------------------------------------------------
-    cmp    x23, x28
-    blt    loop_columnas
-
-    // ----------------------------------------------------
-    // 10) Finalizar esta fila: fila++ (x19++)
-    //     y, si fila < 10, volver a loop_filas
-    // ----------------------------------------------------
-    add    x19, x19, #1           // fila++
-    cmp    x19, #10
-    blt    loop_filas
-
-    // ----------------------------------------------------
-    // 11) Epílogo: restaurar FP y LR, y retornar
-    // ----------------------------------------------------
-    ldp    x29, x30, [sp], #16
+fin_detalles:
+    ldp x29, x30, [sp], #16
     ret
 
-//
+dibujar_fila_detalles:
+    stp  x29, x30, [sp, #-16]!
+
+    mov x11, #0                   // contador horizontal
+    mov x12, x1                   // guardar X inicial
+
+loop_pares_rectangulos:
+    cmp x11, #24                  // 24 pares
+    b.ge fin_fila_detalles
+
+    mov x3, #12                   // ancho
+    mov x4, #12                   // alto
+    mov x10, x21                  // color 1
+    bl pintar_rectangulo
+
+    add x1, x1, #10
+    mov x10, x22                  // color 2
+    bl pintar_rectangulo
+
+    add x1, x1, #28               // avanzar horizontalmente
+    add x11, x11, #1
+    b loop_pares_rectangulos
+
+fin_fila_detalles:
+    mov x1, x12                   // restaurar x1 original
+    ldp x29, x30, [sp], #16
+    ret
 
 
 
-// DEJAR ESTA LINEA AL ULTIMO 
+
+// DEJAR ESTA LINEA AL ULTIMO

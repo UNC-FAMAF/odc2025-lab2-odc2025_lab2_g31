@@ -1,7 +1,7 @@
 Nombre y apellido 
 Integrante 1: Lautaro Santino Maldonado,46845849
 Integrante 2: Daniel Alejandro Rojas,46890147
-Integrante 3: Martina Brida,-
+Integrante 3: Martina Brida,45375590
 Integrante 4: Maximo Barrionuevo Mazurkievich,46889534
 
 
@@ -14,7 +14,13 @@ Todo el código está dividido en funciones para que sea más ordenado y fácil 
 
 
 Descripción ejercicio 2:
+Este programa hace un dibujo animado del fondo del mar. Está hecho por capas, como si fuera un dibujo con muchas hojas superpuestas.
 
+Primero se pinta todo de azul, como si fuera el agua del mar. Esa es la primera capa, el fondo.
+Después se dibuja el suelo marino, con arena, letras, burbujas y algas. Esa es la segunda capa, que le da más vida y detalles al fondo.
+Encima de eso, se dibujan peces de distintos colores. Están repartidos por la pantalla y se van moviendo un poquito en cada vuelta, como si nadaran. Esa es la tercera capa.
+Y por último, se dibuja un tiburón que también se mueve. A veces cambia un poco su forma para que parezca que está nadando. Esa es la cuarta capa, que va por encima de todo.
+Todo esto se repite muchas veces para que parezca que todo se está moviendo y animando. Así se crea una escena del fondo del mar, como si fuera una película dibujada.
 
 Justificación instrucciones ARMv8:
 Neg: sirve para negar un valor.Nos sirvio para:
